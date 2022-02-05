@@ -1,0 +1,221 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{float}
+% \usepackage[titletoc,title]{appendix}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+
+\title{3XA3 Development Plan}
+\author{Group 7 - Databased \\ Eesha Qureshi, qureshe \\ Faiq Ahmed, ahmedf46 \\ Kevin Kannammalil, kannammk}
+\date{February 4th 2022}
+
+\begin{document}
+
+\maketitle
+
+% \newpage
+% \section{Revision History}
+
+% \begin{table}[hbt!]
+%     % \centering
+%     \begin{tabular}{ |c|c|c| } 
+%     \hline
+%     Date & Developer(s) & Change \\
+%     \hline
+%     % \multirow{3}{4em}{Row1} & cell2 & cell3 \\ 
+%     February 3, 2022 & Kevin Kannammalil & Initial Document and Outline \\
+%     February 4, 2022 & Faiq Ahmed & Technology \\ 
+%                      &            & POC Demonstration Plan \\
+%                      & Kevin Kannammalil & cell 2 \\
+%                      & Eesha Qureshi & cell 2 \\
+%     \hline
+%     \end{tabular}
+%     \caption{Revision History}
+%     \label{tab:my_label}
+% \end{table}
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introduction}
+
+This is the Development Plan for the project Databased
+
+\section{Team Meeting Plan}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ |c|c|c| } 
+    \hline
+    Where & When & Length \\
+    \hline
+    Microsoft Teams/ITB 236 & Every Tuesday \& Thursday at 9:30 am & 2 hours \\
+    Discord & Every Friday at 5 pm & 2 hours \\
+    \hline
+    \end{tabular}
+    \caption{Team Meetings}
+    \label{tab:teammeetings}
+\end{table}
+
+\subsection{Rules for Agenda}
+
+An agenda will be used for all team meetings that will be held. The rules for this agenda will be: 
+
+\begin{enumerate}
+    \item The agenda must be prepared and distributed before a meeting begins
+    \item There should be a reasonable amount of topics in an agenda 
+    \item There will always be a chair overlooking the meeting
+    \item The chair must go over the topics of the agenda before proceeding to the first topic
+    \item The topics of the agenda should all be addressed by the end or postponed to the next meeting 
+\end{enumerate}
+
+\subsection{Meeting Roles}
+
+The meeting roles of each member are: 
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ |c|c|c| } 
+    \hline
+    Member & Roles \\
+    \hline
+    Faiq Ahmed & Chair, Participant\\
+    Eesha Qureshi & Timekeeper, Participant \\
+    Kevin Kannammalil & Recorder, Participant \\
+    \hline
+    \end{tabular}
+    \caption{Meeting Roles}
+    \label{tab:meetingroles}
+\end{table}
+
+\subsection{Meeting Role Descriptions}
+
+\subsubsection{Chair}
+The role of the chair is to
+\begin{enumerate}
+    \item create an agenda for the meeting and plans logistics
+    \item guides the meeting corresponding to the agenda
+    \item be in charge of the meeting environment and participants
+    \item assigns responsibilities and tasks for each member
+\end{enumerate}
+
+\subsubsection{Timekeeper}
+The role of a timekeeper is to
+\begin{enumerate}
+    \item be in charge of time limits for each topic in the agenda
+\end{enumerate}
+
+\subsubsection{Recorder}
+The role of a recorder is to 
+\begin{enumerate}
+    \item coordinate with the chair to create an agenda
+    \item distribute the agenda before the meeting begins
+    \item create minutes for the meeting and distribute it to everyone
+\end{enumerate}
+
+\subsubsection{Participant}
+The role of a participant is to 
+\begin{enumerate}
+    \item understand the agenda and objective of the meeting
+    \item participates in discussion and contributes to topics of the agenda
+\end{enumerate}
+
+\section{Team Communication Plan}
+
+Team communication will take place predominantly during the team meetings. These meetings will take place on Microsoft Teams every Tuesday and Thursday, and will take place on Discord every Friday. The meetings on Discord will take place in a group voice call in the 3XA3\_L01GRP07 Discord channel with all members expected to be present and on time. The meetings on Teams will take place in a group call in the 3XA3\_L01GRP07 Teams channel with all members expected to be present and on time. Additional communication outside of regular meeting times will take place in the corresponding Discord text channel.
+
+\section{Team Member Roles}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ |c|c| } 
+    \hline
+    Member & Roles \\
+    \hline
+    Faiq Ahmed & Team Leader, Developer, Code Reviewer, LaTeX Expert, Tester\\
+    Eesha Qureshi & Developer, Code Reviewer, Git Expert, Tester \\
+    Kevin Kannammalil & Developer, Code Reviewer, Scribe, Documentation Expert \\
+    \hline
+    \end{tabular}
+    \caption{Team Member Roles}
+    \label{tab:memberroles}
+\end{table}
+
+\section{Git Workflow Plan}
+
+The Git repository where all the project code will be sourced is named "GoDBMS L01 GRP07". Edits will be reflected in this repository with descriptive commit messages to provide an accurate version history. A branch-feature workflow will be implemented. For each feature, a new branch is created and after validation and verification, it is merged into the main branch, thus ensuring that the main branch is always functional. Labels are represented by git tags, where a tag displays the version.  
+
+\section{Proof of Concept Demonstration Plan}
+
+\subsection{Significant Risks}
+
+\subsubsection{Implementation}
+
+As this project contains both an SQL parser and the implementation of the actual database with the addition of adding in concurrency, the scope of this project may be too large to finish by the end of the term. Though the SQL parser would be a relatively large part of the project, it would not be difficult to implement due to its straight forward nature and having various resources include the original project source code to reference. The DBMS on the other hand would need to be modified significantly and would require a broad understanding of the theory of databases to implement efficiently.
+
+\subsubsection{Testing}
+
+Due to the concurrent system design aspect of this project certain robust testing methods such as statement coverage based testing may be difficult to implement. Similarly exploratory testing would also be difficult due to the large number of scenarios that can be created by combining different SQL queries.
+
+\subsubsection{Libraries}
+
+Library installation is not a concern as Go has a package manager that can be used to easily install all necessary libraries for this project. The original projects also does not have any Java specific libraries that are not also available on Go.
+
+\subsubsection{Portability}
+
+Portability is not a concern as Go can be compiled to a binary for all modern operating systems.
+
+\subsection{Plan to Overcome Risks}
+
+\subsubsection{Implementation}
+
+The scope of this project would be significantly reduced to only support a few primitive data types such as strings and integers as well a single simple storage method such as a B+ Tree. To further reduce the complexity of this project an SQL parsing library can be used instead of creating our own SQL parser if the scope needs to be further reduced. All team members are familiar with Database theory and how transactions are handled concurrently in a DBMS. For the proof of concept demo, the functionality for a single SQL instruction such as creating a table in the database can be implemented.
+
+\subsubsection{Testing}
+
+To ensure that testing can be done efficiently and within the allocated time frame of the course, unit testing will be used instead of exploratory testing. Additionally the majority of the unit tests would only loosely follow a path coverage model. Additional testing methods such as exploratory testing may also be used after unit testing is complete if possible within the time frame. For the proof of concept demonstration, some basic unit tests would be implemented for the database and SQL parser for the specific SQL instruction that would be implemented.
+
+\subsubsection{Libraries}
+
+The official go package manager would be used to install and maintain the libraries. The modules file would be pushed onto the repository to keep track of all installed libraries between team members.
+
+\subsubsection{Portability}
+
+All members will use the latest version of Go and compile and build the project on their own operating systems for testing and the demonstration.
+
+\section{Technology}
+
+\subsection{Programming Language}
+
+This project will be implemented using the latest version of the Go programming language. This language was chosen due to high performance and its simplistic approach to creating concurrent systems using message passing. All team members are familiar with written concurrent systems in Go.
+
+\subsection{IDE}
+
+This project will be using the Visual Studio Code IDE. This IDE is easy to use and set up and has additional support for Go using addons to the IDE. All team members are already fimiliar with this IDE as well.
+
+\subsection{Testing Framework}
+
+This project will use the Go standard testing library for writing unit tests. These tests can easily be ran over the command line by the Go package manager.
+
+\subsection{Document Generation}
+
+This project will be documented in LaTeX and the documentation would be pushed to the repository. All source code will also be properly documented with comments and the Godocs library will also be used to automatically generate documentation from the comments.
+
+\section{Coding Style}
+
+The coding standard that we will be going off of is the Golang style described in \url{https://go.dev/doc/effective_go} to stay consistent to one style. We will also be utilizing the $camelCase$ naming convention for variables and parameters and the $PascalCase$ naming convention for methods and classes.
+
+\section{Project Schedule}
+
+The project schedule for our group is located in our git repository which can be found at \url{https://gitlab.cas.mcmaster.ca/ahmedf46/GoDBMS_L01_GRP07/-/blob/main/ProjectSchedule/GanttChart.pdf}. Any updates to our project timeline and tasks will be reflected in the gantt chart. The gantt chart focuses on the progress of the project tasks and the resources. 
+
+\section{Project Review}
+
+Not available until Revision 1
+
+\end{document}

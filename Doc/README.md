@@ -1,2 +1,2 @@
-# GoDBMS L01 GRP07 Source Code
+# GoDBMS L01 GRP07
 
