@@ -30,9 +30,9 @@ type createTableColumn struct {
 	NotNull bool
 }
 
-// parseTableQuery is a function that is used to parse the create table query
+// parseCreateTableQuery is a function that is used to parse the create table query
 // input into the CreateTableStatement struct.
-func parseTableQuery(query string) (*CreateTableStatement, error) {
+func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 
 	// Split the user input at open bracket to seperate the table name and
 	// column info
