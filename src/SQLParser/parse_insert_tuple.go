@@ -9,18 +9,20 @@ import (
 type InsertTupleStatement struct {
 	// TableName is a string representing name of the table
 	TableName string
-	// Columns is an array of TableColumn representing the columns
-	Columns []TableColumn
+	// Columns is an array of tableColumn representing the columns
+	Columns []tableColumn
 }
 
-// TableColumn holds the insert tuple query column info received from the user
-type TableColumn struct {
+// tableColumn holds the insert tuple query column info received from the user
+type tableColumn struct {
 	// Name is a string representing name of the column
 	Name string
 	// Value is a string representing the value of the column
 	Value string
 }
 
+// ParseInsertTupleQuery is a function that is used to parse a query
+// and return a InsertTupleStatement struct.
 func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 	// Divides the query into three parts: the table name, the column names, and the
 	// values
@@ -49,10 +51,10 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 		getValues[i] = strings.Trim(v, " ,);")
 	}
 
-	// Initializes the array of TableColumns
-	columns := []TableColumn{}
+	// Initializes the array of tableColumns
+	columns := []tableColumn{}
 	for i := range getColumns {
-		columnStruct := TableColumn{getColumns[i], getValues[i]}
+		columnStruct := tableColumn{getColumns[i], getValues[i]}
 		columns = append(columns, columnStruct)
 	}
 
