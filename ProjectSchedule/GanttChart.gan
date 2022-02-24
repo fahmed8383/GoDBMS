@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2022-01-30" view-index="1" gantt-divider-location="369" resource-divider-location="300" version="3.1.3100" locale="en_CA">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2022-01-30" view-index="0" gantt-divider-location="369" resource-divider-location="300" version="3.1.3100" locale="en_CA">
     <description/>
     <view zooming-state="default:6" id="gantt-chart">
         <field id="tpd3" name="Name" width="187" order="0"/>
@@ -58,7 +58,7 @@
         </task>
         <task id="4" name="POC Demo" color="#8cb6ce" meeting="false" start="2022-02-21" duration="8" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true">
             <task id="103" name="Create SQL Parser" color="#8cb6ce" meeting="false" start="2022-02-21" duration="8" complete="0" thirdDate="2022-01-23" thirdDate-constraint="0" expand="true"/>
-            <task id="105" name="Handle Int records" color="#8cb6ce" meeting="false" start="2022-02-21" duration="8" complete="0" thirdDate="2022-01-23" thirdDate-constraint="0" expand="true"/>
+            <task id="105" name="Handle Int and String Records" color="#8cb6ce" meeting="false" start="2022-02-21" duration="8" complete="0" thirdDate="2022-01-23" thirdDate-constraint="0" expand="true"/>
             <task id="107" name="Store Data Functionality" color="#8cb6ce" meeting="false" start="2022-02-21" duration="8" complete="0" thirdDate="2022-01-23" thirdDate-constraint="0" expand="true"/>
             <task id="91" name="Slides" color="#8cb6ce" meeting="false" start="2022-02-25" duration="4" complete="0" thirdDate="2022-02-01" thirdDate-constraint="0" expand="true"/>
         </task>
