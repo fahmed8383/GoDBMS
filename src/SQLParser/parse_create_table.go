@@ -38,9 +38,20 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 	// column info
 	bracketSplit := strings.Split(query, "(")
 
+	// Remove all spaces on the ends of the table name info string and split it
+	// at all remaining spaces in between.
+	nameTrim := strings.Trim(bracketSplit[0], " ")
+	nameSplit := strings.Split(nameTrim, " ")
+
+	// If the array of strings that we get by splitting it at space is not equal
+	// to three, this means that either we are missing a table name or the
+	// table name is multple words.
+	if len(nameSplit) != 3 {
+		return nil, errors.New("Create table query has an invalid table name")
+	}
+
 	// Get the table name and convert it to lowercase
-	name := strings.Split(bracketSplit[0], " ")[2]
-	name = strings.ToLower(name)
+	name := nameSplit[2]
 
 	// Split the column info at coma to seperate all the columns
 	columnsSplit := strings.Split(bracketSplit[1], ",")
@@ -70,8 +81,8 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 		}
 
 		// Get column name and type and set them to lowercase
-		columnName := strings.ToLower(columnData[0])
-		columnType := strings.ToLower(columnData[1])
+		columnName := columnData[0]
+		columnType := columnData[1]
 		notNull := false
 
 		// Check to make sure that the column type is a valid datatype
@@ -82,7 +93,7 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 		// Check to see if an optional parameter is included for the column
 		if len(columnData) > 2 {
 			// Convert the optional parameter to lower case
-			optParam := strings.ToLower(columnData[2])
+			optParam := columnData[2]
 
 			// Check to see if it is a valid optional parameter
 			switch optParam {

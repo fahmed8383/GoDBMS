@@ -35,7 +35,6 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 
 	// Extracts the table name and coverts it to lowercase
 	name := strings.Split(querySplit[0], " ")[2]
-	name = strings.ToLower(name)
 
 	// Extracts the column names and trims them
 	columnsSplit := strings.Split(querySplit[1], " ")
