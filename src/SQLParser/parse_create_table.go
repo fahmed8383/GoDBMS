@@ -40,7 +40,6 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 
 	// Get the table name and convert it to lowercase
 	name := strings.Split(bracketSplit[0], " ")[2]
-	name = strings.ToLower(name)
 
 	// Split the column info at coma to seperate all the columns
 	columnsSplit := strings.Split(bracketSplit[1], ",")
@@ -70,8 +69,8 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 		}
 
 		// Get column name and type and set them to lowercase
-		columnName := strings.ToLower(columnData[0])
-		columnType := strings.ToLower(columnData[1])
+		columnName := columnData[0]
+		columnType := columnData[1]
 		notNull := false
 
 		// Check to make sure that the column type is a valid datatype
@@ -82,7 +81,7 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 		// Check to see if an optional parameter is included for the column
 		if len(columnData) > 2 {
 			// Convert the optional parameter to lower case
-			optParam := strings.ToLower(columnData[2])
+			optParam := columnData[2]
 
 			// Check to see if it is a valid optional parameter
 			switch optParam {
