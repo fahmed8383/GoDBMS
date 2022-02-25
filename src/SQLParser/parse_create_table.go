@@ -38,8 +38,20 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 	// column info
 	bracketSplit := strings.Split(query, "(")
 
+	// Remove all spaces on the ends of the table name info string and split it
+	// at all remaining spaces in between.
+	nameTrim := strings.Trim(bracketSplit[0], " ")
+	nameSplit := strings.Split(nameTrim, " ")
+
+	// If the array of strings that we get by splitting it at space is not equal
+	// to three, this means that either we are missing a table name or the
+	// table name is multple words.
+	if len(nameSplit) != 3 {
+		return nil, errors.New("Create table query has an invalid table name")
+	}
+
 	// Get the table name and convert it to lowercase
-	name := strings.Split(bracketSplit[0], " ")[2]
+	name := nameSplit[2]
 
 	// Split the column info at coma to seperate all the columns
 	columnsSplit := strings.Split(bracketSplit[1], ",")
