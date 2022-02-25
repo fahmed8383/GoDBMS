@@ -9,12 +9,12 @@ import (
 type InsertTupleStatement struct {
 	// TableName is a string representing name of the table
 	TableName string
-	// Columns is an array of tableColumn representing the columns
-	Columns []tableColumn
+	// Columns is an array of tupleColumn representing the columns
+	Columns []tupleColumn
 }
 
-// tableColumn holds the insert tuple query column info received from the user
-type tableColumn struct {
+// tupleColumn holds the insert tuple query column info received from the user
+type tupleColumn struct {
 	// Name is a string representing name of the column
 	Name string
 	// Value is a string representing the value of the column
@@ -37,9 +37,10 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 	name := strings.Split(querySplit[0], " ")[2]
 
 	// Extracts the column names and trims them
-	columnsSplit := strings.Split(querySplit[1], " ")
+	columnSplit := strings.Split(querySplit[1], " ")
 	// Removes irrelevant words from the column names
-	getColumns := columnsSplit[0:len(querySplit)]
+	// e.g. "[column1, column2)],  VALUES" -> "[column1, column2)]"
+	getColumns := columnSplit[0:len(querySplit)]
 	for i, v := range getColumns {
 		getColumns[i] = strings.Trim(v, " ,)")
 	}
@@ -50,10 +51,12 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 		getValues[i] = strings.Trim(v, " ,);")
 	}
 
-	// Initializes the array of tableColumns
-	columns := []tableColumn{}
-	for i := range getColumns {
-		columnStruct := tableColumn{getColumns[i], getValues[i]}
+	// Initializes the array of tupleColumns
+	columns := []tupleColumn{}
+	// Goes through each column name and value, creates a tupleColumn struct
+	// and then adds them into the array of tupleColumns
+	for i := range getValues {
+		columnStruct := tupleColumn{getColumns[i], getValues[i]}
 		columns = append(columns, columnStruct)
 	}
 
