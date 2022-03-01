@@ -39,7 +39,7 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 	// Extracts the column names and trims them
 	columnSplit := strings.Split(querySplit[1], " ")
 	// Removes irrelevant words from the column names
-	// e.g. "[column1, column2)],  VALUES" -> "[column1, column2)]"
+	// e.g. "[column1, column2),  VALUES]" -> "[column1, column2)]"
 	getColumns := columnSplit[0:len(querySplit)]
 	for i, v := range getColumns {
 		getColumns[i] = strings.Trim(v, " ,)")
