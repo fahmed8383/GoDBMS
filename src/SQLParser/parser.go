@@ -11,14 +11,14 @@ func ParseInput() {
 
     fmt.Println("Welcome to GoDBMS")
     fmt.Println("Please enter a query")
-    fmt.Println("\n")
 
     for true{
+
+        fmt.Println("\n")
 
         //iniate buffer to read standard input delimited by newline
         reader := bufio.NewReader(os.Stdin)
         input, err := reader.ReadString('\n')
-        fmt.Print("\n")
 
         if err != nil {
             fmt.Println("An error occured while reading input. Please try again", err)
@@ -32,38 +32,27 @@ func ParseInput() {
         query := strings.ToLower(input) 
         querySplit := strings.Split(query, " ")
 
-
         //if the user input is a 'create table' query call parseCreateTableQuery 
         if querySplit[0] == "create" && querySplit[1] == "table"{
             output, err := parseCreateTableQuery(query)
             if err != nil {
                 fmt.Print("ERROR: ")
                 fmt.Println(err)
-                fmt.Print("\n")
-                
             } else {
                 fmt.Println(*output)
-                fmt.Print("\n")
             }
-        }else if querySplit[0] == "insert" && querySplit[1] == "into"{
+        } else if querySplit[0] == "insert" && querySplit[1] == "into"{
             output, err := parseInsertTupleQuery(query)
             if err != nil {
                 fmt.Print("ERROR: ")
                 fmt.Println(err)
-                fmt.Print("\n")
-                
             } else {
                 fmt.Println(*output)
-                fmt.Print("\n")
             }
-        
-        }else if querySplit[0] == "quit"{
+        } else if querySplit[0] == "quit"{
             break
         } else {
             fmt.Println("Please enter a valid command")
-            
         }
-
     }
-    
 }
