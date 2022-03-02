@@ -2,7 +2,6 @@ package Database
 
 import (
 	"strings"
-	"GoDBMS/SQLParser"
 )
 
 // Create a global variable tables hashmap for this package. This variable
@@ -55,9 +54,9 @@ func TableExists(tableName string) (bool){
 }
 
 // InsertTable is a function to create a TableSchema struct pointer from a
-// SQLParser.CreateTableStatement pointer and saves the TableSchema struct
+// CreateTableStatement pointer and saves the TableSchema struct
 // pointer to the tables map.
-func InsertTable(tableInfo *SQLParser.CreateTableStatement){
+func InsertTable(tableInfo *CreateTableStatement){
 	// Create a table column mapping and array.
 	columnMap := make(map[string]int)
 	columnsArray := []tableColumn{}

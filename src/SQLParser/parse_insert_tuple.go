@@ -1,29 +1,14 @@
 package SQLParser
 
 import (
+	"GoDBMS/Database"
 	"errors"
 	"strings"
 )
 
-// InsertTupleStatement holds the insert tuple query info received from the user
-type InsertTupleStatement struct {
-	// TableName is a string representing name of the table
-	TableName string
-	// Columns is an array of insertTupleColumn representing the columns
-	Columns []insertTupleColumn
-}
-
-// insertTupleColumn holds the insert tuple query column info received from the user
-type insertTupleColumn struct {
-	// Name is a string representing name of the column
-	Name string
-	// Value is a string representing the value of the column
-	Value string
-}
-
 // ParseInsertTupleQuery is a function that is used to parse a query
 // and return a InsertTupleStatement struct.
-func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
+func parseInsertTupleQuery(query string) (*Database.InsertTupleStatement, error) {
 	// Divides the query into three parts: the table name, the column names, and the
 	// values
 	querySplit := strings.Split(query, "(")
@@ -67,21 +52,21 @@ func parseInsertTupleQuery(query string) (*InsertTupleStatement, error) {
 		getValues[i] = strings.Trim(v, " );")
 	}
 
-	// Initializes the array of insertTupleColumns
-	columns := []insertTupleColumn{}
+	// Initializes the array of InsertTupleColumns
+	columns := []Database.InsertTupleColumn{}
 
 	// Checks if the number of columns and values are the same
 	if len(getColumns) != len(getValues) {
 		return nil, errors.New("Insert tuple statement has different number of columns and values")
 	}
 
-	// Goes through each column name and value, creates a insertTupleColumn struct
-	// and then adds them into the array of insertTupleColumns
+	// Goes through each column name and value, creates a InsertTupleColumn struct
+	// and then adds them into the array of InsertTupleColumns
 	for i := range getValues {
-		columnStruct := insertTupleColumn{getColumns[i], getValues[i]}
+		columnStruct := Database.InsertTupleColumn{getColumns[i], getValues[i]}
 		columns = append(columns, columnStruct)
 	}
 
 	// Returns a new InsertTupleStatement struct pointer based on the query
-	return &InsertTupleStatement{name, columns}, nil
+	return &Database.InsertTupleStatement{name, columns}, nil
 }
