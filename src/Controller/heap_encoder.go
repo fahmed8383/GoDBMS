@@ -1,3 +1,5 @@
+Package Controller
+
 import (
 	"GoDBMS/Database"
 	"log"
