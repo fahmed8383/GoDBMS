@@ -11,7 +11,7 @@ type tuple struct {
 }
 
 // Constructor function to initialize a Tuple and return a pointer to the tuple
-func CreateTuple(table *tableSchema, insertQuery *SQLParser.InsertTupleStatement) (*tuple, error) {
+func CreateTuple(table *TableSchema, insertQuery *SQLParser.InsertTupleStatement) (*tuple, error) {
 
 	// Creates a new array with interface{} type to accept multiple data types
 	values := []interface{}{}
