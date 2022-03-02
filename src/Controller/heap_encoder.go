@@ -1,15 +1,14 @@
-Package Controller
+package Controller
 
 import (
 	"GoDBMS/Database"
-	"log"
 	"encoding/gob"
 	"bytes"
 )
 
 // EncodeHeap is a function to serialize the catalog data structure into
 // bytes that can be written to a data file.
-func EncodeHeap(string name) (error) {
+func EncodeHeap(name string) (error) {
 
 	// Get a pointer to the current heap in memory.
 	heapPointer := Database.GetHeap()
@@ -25,11 +24,13 @@ func EncodeHeap(string name) (error) {
 	if err != nil {
 		return err
 	}
+
+	return nil
 }
 
 // DecodeHeap is a function to deserialize the heap data structure from
 // a byte data file on the disk.
-func DecodeHeap(string name) (error) {
+func DecodeHeap(name string) (error) {
 
 	// Check if the heap data file exists.
 	if FileExists(name) {
@@ -60,4 +61,6 @@ func DecodeHeap(string name) (error) {
 		// in memory.
 		Database.InitializeHeap()
 	}
+
+	return nil
 }

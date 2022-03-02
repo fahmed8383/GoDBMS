@@ -1,6 +1,7 @@
 package SQLParser
 
 import (
+    "GoDBMS/Controller"
     "fmt"
     "strings"
     "bufio"
@@ -14,7 +15,7 @@ func ParseInput() {
 
     for true{
 
-        fmt.Println("\n")
+        fmt.Println("")
 
         //iniate buffer to read standard input delimited by newline
         reader := bufio.NewReader(os.Stdin)
@@ -38,9 +39,18 @@ func ParseInput() {
             if err != nil {
                 fmt.Print("ERROR: ")
                 fmt.Println(err)
-            } else {
-                fmt.Println(*output)
+                continue
             }
+
+            err = Controller.ProcessCreateTable(output)
+            if err != nil {
+                fmt.Print("ERROR: ")
+                fmt.Println(err)
+                continue
+            }
+
+            fmt.Println("Table created successfully")
+
         } else if querySplit[0] == "insert" && querySplit[1] == "into"{
             output, err := parseInsertTupleQuery(query)
             if err != nil {
