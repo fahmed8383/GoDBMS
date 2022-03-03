@@ -1,38 +1,14 @@
 package SQLParser
 
 import (
+	"GoDBMS/Database"
     "strings"
 	"errors"
 )
 
-// CreateTableStatement holds the create table query info received from the
-// user.
-type CreateTableStatement struct {
-	// Name is a string representing name of the table.
-	Name string
-	// PrimaryKeyIndex is an int representing the index of the primary key 
-	// column.
-	PrimaryKeyIndex int
-	// Columns is an array of createTableColumn structs representing the 
-	// columns.
-	Columns []createTableColumn
-}
-
-// createTableColumn holds the create table query column info received from the
-// user.
-type createTableColumn struct {
-	// Name is a string representing name of the column.
-	Name string
-	// Name is a string representing datatype of the column.
-	Datatype string
-	// NotNull is a boolean representing whether the entries into the column
-	// can be null or not.
-	NotNull bool
-}
-
 // parseCreateTableQuery is a function that is used to parse the create table query
 // input into the CreateTableStatement struct.
-func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
+func parseCreateTableQuery(query string) (*Database.CreateTableStatement, error) {
 
 	// Split the user input at open bracket to seperate the table name and
 	// column info
@@ -57,7 +33,7 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 	columnsSplit := strings.Split(bracketSplit[1], ",")
 
 	primaryKeyIndex := -1
-	columns := []createTableColumn{}
+	columns := []Database.CreateTableColumn{}
 
 	// Loop through all the columns
 	for i, columnString := range columnsSplit {
@@ -118,7 +94,7 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 		
 		// Create the column struct from the user input and add it to the 
 		// columns array
-		columnStruct := createTableColumn{columnName, columnType, notNull}
+		columnStruct := Database.CreateTableColumn{columnName, columnType, notNull}
 		columns = append(columns, columnStruct)
 	}
 
@@ -129,5 +105,5 @@ func parseCreateTableQuery(query string) (*CreateTableStatement, error) {
 
 	// Create and return the CreateTableStatement struct pointer from the user
 	// input
-	return &CreateTableStatement{name, primaryKeyIndex, columns}, nil
+	return &Database.CreateTableStatement{name, primaryKeyIndex, columns}, nil
 }
