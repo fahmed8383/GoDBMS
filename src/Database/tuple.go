@@ -5,12 +5,12 @@ import (
 )
 
 // A struct that describes the schema of a Tuple
-type tuple struct {
+type Tuple struct {
 	Values []interface{}
 }
 
 // Constructor function to initialize a Tuple and return a pointer to the tuple
-func CreateTuple(table *TableSchema, insertQuery *InsertTupleStatement) (*tuple, error) {
+func CreateTuple(table *TableSchema, insertQuery *InsertTupleStatement) (*Tuple, error) {
 
 	// Creates a new array with interface{} type to accept multiple data types
 	values := []interface{}{}
@@ -33,5 +33,5 @@ func CreateTuple(table *TableSchema, insertQuery *InsertTupleStatement) (*tuple,
 	}
 
 	// Creates a new tuple and returns a pointer to the tuple
-	return &tuple{values}, nil
+	return &Tuple{values}, nil
 }
