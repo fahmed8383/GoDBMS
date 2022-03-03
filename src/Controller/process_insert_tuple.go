@@ -30,15 +30,20 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 		return err
 	}
 
+	// The primary key of the tuple as a string
 	tupleKeyString := insertTuple.Columns[table.PrimaryKeyIndex].Value
 
+	// Declaring tupleKey as an interface for comparisons
 	var tupleKey interface{}
 
+	// If the primary key is supposed to be an int, then it will be converted to an int
+	// and assigns it to the interface
 	if table.Columns[table.PrimaryKeyIndex].Datatype == "int" {
 		tupleKey, err = strconv.Atoi(tupleKeyString)
 		if err != nil {
 			return err
 		}
+		// Otherwise it assigns the string value to the interface
 	} else {
 		tupleKey = tupleKeyString
 	}
