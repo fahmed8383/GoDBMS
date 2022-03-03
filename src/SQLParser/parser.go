@@ -67,7 +67,11 @@ func ParseInput() {
 
 			fmt.Println("Tuple inserted successfully")
 
-		} else if querySplit[0] == "quit" {
+		} else if query == "list all tables"{
+
+            Controller.ListAllTables()
+        
+        } else if querySplit[0] == "quit" {
 			break
 		} else {
 			fmt.Println("Please enter a valid command")
