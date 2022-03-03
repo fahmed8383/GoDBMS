@@ -68,9 +68,23 @@ func ParseInput() {
 			fmt.Println("Tuple inserted successfully")
 
 		} else if query == "list all tables"{
-
             Controller.ListAllTables()
-        
+        } else if querySplit[0] == "select" {     
+            output, err := parseSelectQuery(query)
+            if err != nil {
+				fmt.Print("ERROR: ")
+				fmt.Println(err)
+				continue
+            }
+
+            tuples, err := Controller.ProcessSelect(output)
+			if err != nil {
+				fmt.Print("ERROR: ")
+				fmt.Println(err)
+				continue
+            }
+
+            fmt.Println(tuples)
         } else if querySplit[0] == "quit" {
 			break
 		} else {

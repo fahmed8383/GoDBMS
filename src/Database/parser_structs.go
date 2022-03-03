@@ -40,3 +40,7 @@ type InsertTupleColumn struct {
 	// Value is a string representing the value of the column
 	Value string
 }
+
+type SelectStatement struct {
+	TableName string
+}
