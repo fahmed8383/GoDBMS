@@ -3,6 +3,7 @@ package Controller
 import (
 	"GoDBMS/Database"
 	"errors"
+	"strconv"
 )
 
 // ProcessInsertTuple is a function that handles the insertion of a tuple into
@@ -29,13 +30,23 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 		return err
 	}
 
-	// The primary key of the tuple
-	tupleKey := insertTuple.Columns[table.PrimaryKeyIndex].Value
+	tupleKeyString := insertTuple.Columns[table.PrimaryKeyIndex].Value
+
+	var tupleKey interface{}
+
+	if table.Columns[table.PrimaryKeyIndex].Datatype == "int" {
+		tupleKey, err = strconv.Atoi(tupleKeyString)
+		if err != nil {
+			return err
+		}
+	} else {
+		tupleKey = tupleKeyString
+	}
 
 	// Utilizes the TupleExists function to check if the tuple already exists
 	// If so, it returns an error stating so
 	if Database.TupleExists(tupleKey, table.PrimaryKeyIndex) {
-		err = errors.New("Tuple with key " + tupleKey + " already exists")
+		err = errors.New("Tuple with key " + tupleKeyString + " already exists")
 		return err
 	}
 
