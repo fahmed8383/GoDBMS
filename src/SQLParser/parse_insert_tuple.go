@@ -45,11 +45,14 @@ func parseInsertTupleQuery(query string) (*Database.InsertTupleStatement, error)
 	columnTrim := columnSplit[0]
 	// Gets the column names by splitting with commas
 	getColumns := strings.Split(columnTrim, ",")
+	for i, col := range getColumns {
+		getColumns[i] = strings.Trim(col, " ")
+	}
 
 	// Extracts the values for each corresponding column name and trims it
 	getValues := strings.Split(querySplit[2], ",")
-	for i, v := range getValues {
-		getValues[i] = strings.Trim(v, " );")
+	for i := range getValues {
+		getValues[i] = strings.Trim(getValues[i], " );")
 	}
 
 	// Initializes the array of InsertTupleColumns

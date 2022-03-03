@@ -2,6 +2,7 @@ package Controller
 
 import (
 	"GoDBMS/Database"
+	"errors"
 	"fmt"
 )
 
@@ -16,13 +17,12 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 		return err
 	}
 
-	fmt.Println("Table found", table.Columns)
-
 	// load heap, decode heap
 	err = DecodeHeap(table.Name)
 	if err != nil {
 		return err
 	}
+
 	heap := Database.GetHeap()
 
 	// Prints tuples in heap
@@ -31,15 +31,38 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 	}
 
 	tupleKey := insertTuple.Columns[table.PrimaryKeyIndex].Value
-	fmt.Println(Database.TupleExists(tupleKey, table.PrimaryKeyIndex), tupleKey, table.PrimaryKeyIndex)
+
 	// check if tuple with primary key already exists
 	if Database.TupleExists(tupleKey, table.PrimaryKeyIndex) {
 		err = fmt.Errorf("Tuple with key %s already exists", tupleKey)
 		return err
 	}
 
-	// not null validity
-	// columns match table and values
+	finalColumns := make([]Database.InsertTupleColumn, len(table.Columns))
+
+	for _, col := range insertTuple.Columns {
+		index, exists := table.ColumnIndex[col.Name]
+		if exists != true {
+			err = errors.New("Column " + col.Name + " does not exist")
+			return err
+		}
+		finalColumns[index] = Database.InsertTupleColumn{col.Name, col.Value}
+	}
+
+	for i, col := range finalColumns {
+		if col.Name == "" {
+			if table.Columns[i].NotNull {
+				// fmt.Println(table.Columns[i])
+				err = errors.New("Column " + table.Columns[i].Name + " canot be null")
+				return err
+			} else {
+				finalColumns[i].Name = table.Columns[i].Name
+			}
+
+		}
+	}
+
+	insertTuple.Columns = finalColumns
 
 	// create tuple
 	// insert tuple into table using heap
