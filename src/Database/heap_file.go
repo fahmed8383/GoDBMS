@@ -27,7 +27,7 @@ func InsertTuple(newTuple *Tuple) {
 // and the index of the key. If it exists return true, else return false.
 func TupleExists(tupleKey interface{}, keyIndex int) bool {
 	for _, currTuple := range heap {
-		if tupleKey == currTuple.Values[keyIndex] {
+		if tupleKey == interface{}(currTuple.Values[keyIndex]) {
 			return true
 		}
 	}

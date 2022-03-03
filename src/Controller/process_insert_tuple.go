@@ -4,6 +4,7 @@ import (
 	"GoDBMS/Database"
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) {
@@ -30,7 +31,18 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 		fmt.Println("Tuple", tuple)
 	}
 
-	tupleKey := insertTuple.Columns[table.PrimaryKeyIndex].Value
+	tupleKeyString := insertTuple.Columns[table.PrimaryKeyIndex].Value
+
+    var tupleKey interface{}
+
+    if table.Columns[table.PrimaryKeyIndex].Datatype == "int" {
+        tupleKey, err = strconv.Atoi(tupleKeyString)
+        if err != nil {
+            return err
+        }
+    } else {
+        tupleKey = tupleKeyString
+    }
 
 	// check if tuple with primary key already exists
 	if Database.TupleExists(tupleKey, table.PrimaryKeyIndex) {
