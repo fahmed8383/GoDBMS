@@ -2,7 +2,6 @@ package Controller
 
 import(
 	"GoDBMS/Database"
-	"fmt"
 )
 
 func ListAllTables() string {
@@ -12,10 +11,8 @@ func ListAllTables() string {
 	tables := ""
 
 	for i := range *keyMap { 
-		fmt.Println(i)
 		tables = tables + i + " "
 	}
 	
 	return tables
-
 }
