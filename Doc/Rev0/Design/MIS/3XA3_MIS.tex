@@ -1,0 +1,944 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+\setcounter{secnumdepth}{0}
+
+\usepackage{color}
+
+\title{3XA3 Module Interface Specification\\ GoDBMS} 
+\author{Team \#7, Databased
+    \\ Eesha Qureshi, qureshe
+    \\ Faiq Ahmed, ahmedf46
+    \\ Kevin Kannammalil, kannammk}
+
+\date{March 18, 2022}
+
+
+\begin {document}
+ 
+\maketitle
+\newpage
+\tableofcontents
+\listoftables
+\listoffigures
+
+\newpage
+\begin{table}[h]
+\caption{\bf Revision History}
+\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\midrule
+March 16, 2021 & 1.0 & Initial Document\\
+March 17, 2021 & 1.1 & Wrote MIS for half the modules\\
+March 18, 2021 & 1.2 & Finished MIS for all modules\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% process_create_table
+% process_insert_tuple
+% process_select
+% list_all_tables
+% heap_encoder
+% storage_lock
+\newpage
+
+\section {CLI Module}
+
+\subsection{Module}
+CLI
+
+\subsection {Uses}
+Http Server
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+StartCLI & & & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+Keyboard\\
+Monitor screen
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent StartCLI(): Take user input from the keyboard directly from a command line continuously and convert the string to lowercase. If this string is "quit" then immediately exit the loop, otherwise send this string to the http server with a post request. The returned string response from the http server is then printed our to the monitor screen.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Controller Module}
+
+\subsection{Module}
+Controller
+
+\subsection {Uses}
+Http Server, Parser, Process SQL Statements, Catalog Encoder
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitializeCatalog & & & \\
+StartDBMS & & & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+N/A
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+The CLI has been started to be able to send inputs to the controller through the http server
+
+\subsubsection{Access Routine Semantics}
+\noindent startDBMS(): Receives input from the http server as a string. If the string starts with "update", send the string to Parser.ParseModifyRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessModifyRecord(). Otherwise if the string starts with "insert", send the string to Parser.ParseInsertRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessInsertRecord(). Otherwise if the string starts with "create", send the string to Parser.ParseCreateTable(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessCreateTable(). Otherwise if the string starts with "drop table", send the string to Parser.ParseDeleteTable(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessDeleteTable(). Otherwise if the string starts with "delete", send the string to Parser.ParseDeleteRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessDeleteRecord(). Otherwise if the string starts with "select", send the string to Parser.ParseSelect(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessSelect(). Otherwise if the string is "shut down", call the CatalogEncoder.EncodeCatalog() function and return. Otherwise return an error stating that the query was invalid. If an error is returned by Parser or ProcessSQLStatement at any point, immediately send the error back to the http server as a response and return. If no error is returned, send a success message or the output of the ProcessSQLStatement function back to the http server.\\
+
+\noindent InitializeCatalog(): Call the CatalogEncoder.DecodeCatalog() function.
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Process SQL Statements}
+
+\subsection{Module}
+Process SQL Statements
+
+\subsection {Uses}
+Storage Lock, Storage Encoder, Heap File, Catalog
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} \\
+\hline
+ProcessCreateTable & String, $\mathbb{N}$, seq of $\langle$seq of $\langle$String, String, Bool$\rangle \rangle$ & error \\
+\hline
+ProcessInsertRecord & String, seq of $\langle$String, String$\rangle$ & error \\
+\hline
+ProcessSelect & String, seq of $\langle$ String, String $\rangle$ & seq of $\langle$seq$\rangle$, error \\
+\hline
+ProcessDeleteTable & String & error \\
+\hline
+ProcessDeleteRecord & String, String & error \\
+\hline
+ProcessModifyRecord & String, String, String & error \\
+\hline
+ListAllTables &  & seq of $\langle$seq of $\langle$String, $\mathbb{N}\rangle$ \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+
+N/A
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+N/A
+
+\subsubsection {Assumptions}
+N/A
+
+
+\subsubsection {Access Routine Semantics}
+
+\noindent ProcessCreateTable(name, primaryKeyIndex, columns): Receives the fields of the statement from the parameter and does the error handling. It checks if the table name already exists, if so it returns an error. After the error handling, passes the fields into the InsertTable function in the Catalog module. It then gets a heap pointer when it creates a heap for the table using the Heap File module and uses the heap pointer to encode the heap into a file. The function returns nil to indicate there are no errors. \\
+
+\noindent ProcessInsertRecord(tableName, columns): Receives the fields that represents the insert statement to store a record into the database. It validates the query with multiple checks to ensure it follows the constraints. It decodes the table from the heap using Storage Encoder. It does error handling by checking if the table it is inserting into exists, verifies the primary key validity and duplicate record. Then it extracts the values from the insert statement and passes it to the Heap File to create the record and store in the storage. Finally it encodes the heap again once it's done with the process. \\
+
+\noindent ProcessSelect(tableName, conditions): Receives the table name and a set of conditions to retrieve the records in that table. It decodes the heap to access the records, filters the records to what is desired and returns it. \\
+
+\noindent ProcessDeleteTable(name): Receives the table name to delete from the database. It sends the table name to the Storage Encoder module to delete the file and then erases the table in Catalog and the lock in Storage Lock. \\
+
+\noindent ProcessDeleteRecord(name, primaryKeyIndex): Receives the name to retrieve the heap, then it uses the primaryKeyIndex to delete the record from the heap. It then encodes the heap and stores it back into a file. \\ 
+
+\noindent ProcessModifyRecord(name, primaryKeyIndex, column): Uses the table name and primary key index to find the record using Catalog and then modify the value of the column in that record. \\
+
+\noindent ListAllTables(): Retrieves the table map from Catalog to and returns the existing tables as an array \\
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Storage Encoder Module}
+
+\subsection{Module}
+Storage Encoder
+
+\subsection {Uses}
+File Management
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+EncodeHeap & HeapStruct & error & \\
+\hline
+DecodeHeap & name & HeapStruct & \\
+\hline
+DeleteHeap & name & error & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+N/A
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent EncodeHeap(heap): Receives the heap pointer to write it into the file. It returns any errors that it encounters when writing to the file. \\
+
+\noindent DecodeHeap(name): Receives the table name and checks if the file exists for that table name, if not it returns an error. It reads the file and saves the data onto a heap which it loads into the memory. It returns the heap pointer to be used in other modules. \\ 
+
+\noindent DeleteHeap(name): Receives the table name to retrieve the heap and delete the file using the File Management module. \\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Storage Lock}
+
+\subsection{Module}
+Storage Lock
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+AcquireLock & name &  & \\
+\hline
+ReleaseLock & name &  & \\
+\hline
+DeleteLock & name &  & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+$TableLocks$: map of locks for their corresponding table
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent AcquireLock(name): Creates a lock for a specific table using the name and stores it into $TableLocks$, so it can be accessed by other modules. \\
+
+\noindent ReleaseLock(name): Retrieves the lock from the TableLocks map based on the table name and releases the lock. \\
+
+\noindent DeleteLock(name): Receives the name to remove the lock from the TableLocks map which would be deleting it. \\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{CatalogEncoder}
+
+\subsection{Module}
+CatalogEncoder
+
+\subsection{Uses}
+Catalog, File Management
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+EncodeCatalog & & & \\
+DecodeCatalog & & & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent EncodeCatalog(): Calls function Catalog.GetTablesMap() to get a reference to the catalog which is then converted into a byte array before being saved passing in the byte array to FileManagement.WriteByteFile().\\
+
+\noindent DecodeCatalog(): Passes in the string "catalog" to FileManagement.WriteByteFile() get a byte array which is then converted to a catalog reference before being passed into Catalog.StoreTableMap() to load the catalog into memory.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{File Management}
+
+\subsection{Module}
+File Management
+
+\subsection{Uses}
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+directory string
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+FileExists & string & bool & \\
+ReadByteFile & string & seq of byte & \\
+WriteByteFile & string, seq of byte & & \\
+DeleteFile & string & &\\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent FileExists(name): Looks too see if file by the specified input name exists in the data directory. If directory does not exist or file does not exist, return false. Otherwise return true.\\
+
+\noindent ReadByteFile(name): Checks to see if the data directory exists, if it does not exist, it creates it using the initializeDirectory() local function. The function then looks for a file by the specified input name, if it is able to find the file it reads the bytes from the file and returns the byte array.\\
+
+\noindent ReadByteFile(name, bytes): Checks to see if the data directory exists, if it does not exist, it creates it using the initializeDirectory() local function. The function then create a new file with the specified input name and adds the specified input bytes to it before saving the file.\\
+
+\noindent DeleteFile(name): Looks to see if file by the specified input name exists in the data directory. If the directory and file exist, then it deletes the file with the specified input name.\\
+
+\subsection{Local Functions/Constants}
+\noindent initializeDirectory(): Create a new directory in location specified by the directory constant.
+
+\newpage
+
+\section{Catalog}
+
+\subsection{Module}
+Catalog
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+LoadTablesMap & map of structs & & \\
+GetTablesMap & & map of structs & \\
+TableExists & string & bool & \\
+InsertTable & struct & & \\
+GetTable & string & struct & \\
+DeleteTable & string & & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+catalog: map of structs
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent LoadTablesMap(newCatalog): This methods sets the catalog state variable to newCatalog.\\
+
+\noindent GetTablesMap(): This methods returns the catalog state variable.\\
+
+\noindent TableExists(name): This method checks if the catalog map state variable has a key with the specified name in it. If it does it return true, else it returns false.\\
+
+\noindent GetTable(name): This method gets the struct stored at key name in the catalog state variable and returns it.\\
+
+\noindent Delete(name): This method removes the entry by with the specified key name from the catalog state variable.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Heap File}
+
+\subsection{Module}
+Heap File
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+HeapStruct
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitializeHeap &  & this instance of HeapStruct & \\
+InsertRecord & seq of any type & & \\
+RecordExists & integer, any type & bool & \\
+GetRecord & integer, any type & seq of any type & \\
+ModifyRecord & integer, any type, seq of any type & &\\ 
+DeleteRecord & integer, any type & & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+heap: seq of seq of any type
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent InitializeHeap(): Set heap to an empty array and return the HeapStruct.\\
+
+\noindent InsertRecord(values): Setter method on the HeapStruct that adds values to current heap in current instance. \\
+
+\noindent RecordExists(keyIndex, value): This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, return true, else return false.\\
+
+\noindent GetRecord(keyIndex, value): This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then return that nested array.\\
+
+\noindent ModifyRecord(keyIndex, value, newValues): This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then it overwrites that nest array with newValues in the heap array.\\
+
+\noindent DeleteRecord(keyIndex, value): This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then remove that nested array from the heap array.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Parser}
+
+\subsection{Module}
+
+\subsection {Uses}
+Parse Modify Record, Parse Create Table, Parse Insert Record, Parse Select, Parse Delete Table, Parse Delete Record
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+ParseCreateTable & String & struct, error & \\
+\hline
+ParseInsertRecord & String & struct, error & \\
+\hline
+ParseSelect & String & struct, error & \\
+\hline
+ParseDeleteTable & String & struct, error & \\
+\hline
+ParseDeleteRecord & String & struct, error & \\
+\hline
+ParseModifyRecord & String & struct, error & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+
+N/A
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+N/A
+
+\subsubsection {Assumptions}
+N/A
+
+
+\subsubsection {Access Routine Semantics}
+
+\noindent ParseCreateTable(input): Reads the String input from standard input then parses and splits it to return string representing table name, string representing primary key index, and 2D String array representing columns and sends this info to InitParseCreateTable in the Parse Create Table module. The output along with any errors is returned. \\
+
+\noindent ParseInsertRecord(input): Reads the String input from standard input then parses and splits it to return String representing table name and 2D String array representing columns and sends this info to InitParseInsertRecord in the Parse Insert Record module. The output along with any errors is returned.\\
+
+\noindent ParseSelect(input): Reads the String input from standard input then parses and splits it to return String representing table name and sends this info to InitParseSelect in the Parse Select module. The output along with any errors is returned.\\
+
+\noindent ParseDeleteTable(input): Reads the String input from standard input then parses and splits it to return String representing table name and sends this info to InitParseDeleteTable in the Parse Delete Table module. The output along with any errors is returned.\\
+
+\noindent ParseDeleteRecord(input): Reads the String input from standard input then parses and splits it to return String representing table name, string representing primary key index, and a string representing the target value and sends this info to is sent to InitParseDeleteRecord in the Parse Delete Record module. The output along with any errors is returned.\\ 
+
+\noindent ParseModifyRecord(input): Reads the String input from standard input the parses and splits it to return strings for the table name, primaryKeyIndex, and columns and sends this info to is sent to initParseModifyRecord in the Parse Modify Record module. The output along with any errors is returned.\\
+
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+
+\newpage
+
+\section{Parse Modify Record Record}
+
+\subsection{Module}
+Parse Modify Record
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitModifyRecord & String, String, seq of $\langle$ seq of $\langle$ String $\rangle \rangle$ & Struct, error & \\
+\hline
+GetTableName & & String & \\
+\hline
+GetPrimaryKeyIndex & & String & \\
+\hline
+GetColumns & & String & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+String tableName \\ 
+String primaryKeyIndex \\
+seq of $\langle$ seq of $\langle$ String $\rangle \rangle$ columns \\
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent InitModifyRecord(name, primaryKeyIndex, columns): Receives the name, primaryKeyIndex and columns to create the struct for a modify record statement and returns it along with any errors. \\
+
+\noindent GetTableName(): Returns the table name of the struct \\
+
+\noindent GetPrimaryKeyIndex(): Returns the primary key index in the struct \\
+
+\noindent GetColumns(): Returns the columns in the struct \\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Insert Record}
+
+\subsection{Module}
+Parse Insert Record
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitCreateRecord & String, seq of $\langle$ seq of $\langle$ String $\rangle \rangle$ & Struct, error &\\
+\hline
+GetTableName & & String & \\
+\hline
+GetColumns & & seq of seq of string, string, bool & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+
+String tableName \\
+seq of $\langle$ seq of $\langle$ String $\rangle \rangle$ columns
+
+\subsubsection{Environment Variables}
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+The string represents a valid insert query
+
+\subsubsection{Access Routine Semantics}
+InitCreateRecord(tableName, columns): Recieves String tableName and 2D String array columns from Parser to represent new record. Creates and returns a struct using this information as well as an errors that were found when parsing. If no errors were found, it returns the struct and nil.\\
+
+\noindent GetTableName(): Getter that returns value of the current struct instance. \\
+
+\noindent GetColumns(): Getter that returns columns of the current struct instance.
+
+\subsection{Local Functions/Constants}
+None
+
+\newpage
+
+\section{Parse Create Table}
+
+\subsection{Module}
+Parse Create Table
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+\subsubsection{Exported Types}
+N/A
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out}\\
+\hline
+InitCreateTable & String, $\mathbb{N}$, seq of seq of string, string, bool & Struct, error \\
+\hline
+GetTableName & & String \\
+\hline
+GetPrimaryKeyIndex & & Integer \\
+\hline
+GetColumns & & seq of seq of string, string, bool \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+String tableName \\
+Integer primaryKey \\
+$\langle$String, String, Bool$\rangle \rangle$ columns\\
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent initCreateTable(tableName, primaryKeyIndex, columns): From Parser receives String tableName, Integer primaryKeyIndex that denotes which column contains the primary key, and a sequence of String, String, Bool which represents column name, datatype and not null constraint. Creates and returns a struct using this information as well as an errors that were found when parsing. If no errors were found, it returns the struct and nil. \\
+
+\noindent GetTableName(): Getter that returns value of the current struct instance. \\
+
+\noindent GetPrimaryKeyIndex(): Getter that returns primaryKeyIndex of the current struct instance.\\
+
+\noindent GetColumns(): Getter that returns columns of the current struct instance.\\
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Delete Table}
+
+\subsection{Module}
+Parse Delete Table
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+\subsubsection{Exported Types}
+N/A
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitDeleteTable   & String     &  Struct, error         &          \\
+\hline
+GetTableName & & String & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+String tableName \\
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent InitDeleteTable(tableName): Receives String tableName from Parser which represents the table that needs to be deleted. Creates and returns a struct using this information as well as an errors that were found when parsing. If no errors were found, it returns the struct and nil. \\
+
+\noindent GetTableName(): Getter that returns value of the current struct instance. \\
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Select}
+
+\subsection{Module}
+Parse Select
+
+\subsection {Uses}
+N/A
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitSelect & String, seq of $\langle$ String, String $\rangle$  & Struct, error & \\
+\hline
+GetTableName & & String & \\
+\hline
+GetConditions & & seq of $\langle$ String $\rangle$ & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+String tableName \\
+String conditions \\
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+None
+
+\subsubsection {Assumptions}
+N/A
+
+\subsubsection {Access Routine Semantics}
+\noindent InitSelect(tableName, conditions): Receives String tableName representing the name of the table that is wanted to be accessed and the conditions on the columns we are searching for. Creates and returns a struct using this information as well as an errors that were found when parsing. If no errors were found, it returns the struct and nil. \\
+
+\noindent GetTableName(): Getter that returns tableName of the current struct instance \\
+
+\noindent GetConditions(): Getter that returns conditions of the current struct instance \\
+
+\subsection{Local Functions/Constants}
+N/A
+\medskip
+
+
+\newpage
+
+\section{Parse Delete Record}
+
+\subsection{Module}
+Parse Delete Record
+
+\subsection {Uses}
+N/A
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitDeleteRecord & String, String, String & Struct, error & \\
+\hline
+GetTableName & & String & \\
+\hline
+GetPrimaryKeyIndex & & String & \\
+\hline
+GetValue & & String & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+String tableName\\
+String primaryKeyIndex \\
+String value\\
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+
+\subsubsection {Assumptions}
+
+\subsubsection {Access Routine Semantics}
+\noindent InitDeleteRecord(tableName, primaryKeyIndex): Receives from Parser String tableName which signifies the table the the record will be deleted from, and String primaryKeyIndex which describes the index the primary key is located at, and string value which is the primary key value we are looking for. Creates and returns a struct using this information as well as an errors that were found when parsing. If no errors were found, it returns the struct and nil.\\
+
+\noindent GetTableName(): Getter that returns tableName of the current struct instance \\
+
+\noindent GetPrimaryKeyIndex(): Getter that returns primaryKeyIndex of the current struct instance \\ 
+
+\noindent GetValue(): Getter that returns value of the current struct instance \\
+
+\subsection{Local Functions/Constants}
+N/A
+\medskip
+
+
+\newpage
+\end {document}
