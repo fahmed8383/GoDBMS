@@ -65,8 +65,10 @@
         </task>
         <task id="5" name="Test Plan Rev 0" color="#8cb6ce" meeting="false" start="2022-03-08" duration="4" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true"/>
         <task id="7" name="Design &amp; Doc Rev 0" color="#8cb6ce" meeting="false" start="2022-03-14" duration="5" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true"/>
-        <task id="8" name="Rev 0 Demo" color="#8cb6ce" meeting="false" start="2022-03-19" duration="6" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true">
-            <task id="118" name="Functional Tests" color="#8cb6ce" meeting="false" start="2022-03-19" duration="6" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+        <task id="8" name="Rev 0 Demo" color="#8cb6ce" meeting="false" start="2022-03-19" duration="3" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true">
+            <task id="118" name="Functional Tests" color="#8cb6ce" meeting="false" start="2022-03-19" duration="3" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+            <task id="127" name="Concurrency" color="#8cb6ce" meeting="false" start="2022-03-19" duration="3" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+            <task id="128" name="Restructure" color="#8cb6ce" meeting="false" start="2022-03-19" duration="3" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
         </task>
         <task id="9" name="Final Demo" color="#8cb6ce" meeting="false" start="2022-03-28" duration="9" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true">
             <task id="114" name="Functional Tests" color="#8cb6ce" meeting="false" start="2022-03-28" duration="9" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
