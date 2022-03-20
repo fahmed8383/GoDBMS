@@ -1,4 +1,5 @@
 .aux
-/src/GoDBMS
-/src/Data
+src/DBMS/GoDBMS
+src/DBMS/Data
+src/CLI/CLI
 *.exe
