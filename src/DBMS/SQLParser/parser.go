@@ -51,8 +51,8 @@ func ParseInput(query string) (string) {
 		}
 
 		return fmt.Sprintf("%v", tuples)
-	} else if querySplit[0] == "quit" {
-		return "exiting"
+	} else if querySplit[0] == "shutdown" {
+		return "DBMS Shutdown"
 	} else {
 		return "Please enter a valid command"
 	}

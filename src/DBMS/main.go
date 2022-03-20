@@ -5,6 +5,7 @@ import (
 	"GoDBMS/SQLParser"
 	"net/http"
 	"io/ioutil"
+	"os"
 )
 
 func main() {
@@ -17,10 +18,13 @@ func main() {
 		body, _ := ioutil.ReadAll(r.Body)
 		out := SQLParser.ParseInput(string(body))
 		w.Write([]byte(out))
+
+		if out == "DBMS Shutdown" {
+			// Save the catalog before exiting.
+			Controller.EncodeCatalog()
+			os.Exit(0)
+		}
 	})
 
 	http.ListenAndServe(":6060", nil)
-	
-	// Save the catalog before exiting.
-	Controller.EncodeCatalog()
 }

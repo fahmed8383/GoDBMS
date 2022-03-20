@@ -38,7 +38,24 @@ func main() {
 		}
 		
 		resp, err := http.Post("http://127.0.0.1:6060/", "application/json", bytes.NewBuffer([]byte(query)))
-		body, _ := ioutil.ReadAll(resp.Body)
+
+		// If the server is shutdown sometimes the response is corrupted which
+		// causes an error. Thus break instead of checking for error on shutdown
+		if query == "shutdown" {
+			break
+		}
+
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
 		fmt.Println(string(body))
 	}
 }
