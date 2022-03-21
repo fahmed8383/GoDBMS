@@ -1,4 +1,4 @@
-package Database
+package Storage
 
 import (
 	"errors"

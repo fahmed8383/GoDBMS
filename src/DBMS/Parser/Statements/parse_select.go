@@ -1,12 +1,12 @@
-package SQLParser
+package Statements
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/ParserStructs"
 	"strings"
 	"errors"
 )
 
-func parseSelectQuery(query string) (*Database.SelectStatement, error) {
+func ParseSelect(query string) (*ParserStructs.SelectStatement, error) {
 	querySplit := strings.Split(query, " ")
 	if len(querySplit) != 4 {
 		return nil, errors.New("Invalid number of parameters for select statement")
@@ -17,6 +17,6 @@ func parseSelectQuery(query string) (*Database.SelectStatement, error) {
 
 	name := querySplit[3]
 	
-	return &Database.SelectStatement{name}, nil
+	return &ParserStructs.SelectStatement{name}, nil
 }
 

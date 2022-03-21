@@ -1,7 +1,8 @@
-package Database
+package Storage
 
 import (
 	"strconv"
+	s "GoDBMS/ParserStructs"
 )
 
 // A struct that describes the schema of a Tuple
@@ -10,7 +11,7 @@ type Tuple struct {
 }
 
 // Constructor function to initialize a Tuple and return a pointer to the tuple
-func CreateTuple(table *TableSchema, insertQuery *InsertTupleStatement) (*Tuple, error) {
+func CreateTuple(table *TableSchema, insertQuery *s.InsertTupleStatement) (*Tuple, error) {
 	// Creates a new array with interface{} type to accept multiple data types
 	values := []interface{}{}
 

@@ -1,4 +1,4 @@
-package Database
+package ParserStructs
 
 // CreateTableStatement holds the create table query info received from the
 // user.

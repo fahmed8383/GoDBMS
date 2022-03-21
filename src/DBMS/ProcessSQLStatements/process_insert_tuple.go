@@ -1,7 +1,9 @@
-package Controller
+package ProcessSQLStatements
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/ParserStructs"
+	"GoDBMS/Storage"
+	"GoDBMS/Encoders"
 	"errors"
 	"strconv"
 )
@@ -9,15 +11,15 @@ import (
 // ProcessInsertTuple is a function that handles the insertion of a tuple into
 // the database. It takes an InsertTupleStatement pointer as an argument and
 // returns any errors that occur
-func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) {
+func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err error) {
 
 	// Declares the table that will be used later
-	var table *Database.TableSchema
+	var table *Storage.TableSchema
 
 	// If the table does not exist, return an error stating it
 	// Otherwise, it stores the table in the variable
-	if Database.TableExists(insertTuple.TableName) {
-		table = Database.GetTable(insertTuple.TableName)
+	if Storage.TableExists(insertTuple.TableName) {
+		table = Storage.GetTable(insertTuple.TableName)
 	} else {
 		err = errors.New("Table " + insertTuple.TableName + " does not exist")
 		return err
@@ -25,7 +27,7 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 
 	// Deserializes the heap from the file and loads it
 	// An error is returned if one occurs
-	err = DecodeHeap(table.Name)
+	err = Encoders.DecodeHeap(table.Name)
 	if err != nil {
 		return err
 	}
@@ -50,7 +52,7 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 
 	// Utilizes the TupleExists function to check if the tuple already exists
 	// If so, it returns an error stating so
-	if Database.TupleExists(tupleKey, table.PrimaryKeyIndex) {
+	if Storage.TupleExists(tupleKey, table.PrimaryKeyIndex) {
 		err = errors.New("Tuple with key " + tupleKeyString + " already exists")
 		return err
 	}
@@ -58,7 +60,7 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 	// Creates a new array of type InsertTupleColumn to store the values of the tuple
 	// It uses make to create an array with dynamic size using the length of columns
 	// in the table schema
-	finalColumns := make([]Database.InsertTupleColumn, len(table.Columns))
+	finalColumns := make([]ParserStructs.InsertTupleColumn, len(table.Columns))
 
 	// Iterates through the columns of the InsertTupleStatement query and adds
 	// them to the finalColumns array in their corresponding index
@@ -72,7 +74,7 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 			return err
 		}
 		// Stores a new InsertTupleColumn in the finalColumns array at the index
-		finalColumns[index] = Database.InsertTupleColumn{col.Name, col.Value}
+		finalColumns[index] = ParserStructs.InsertTupleColumn{col.Name, col.Value}
 	}
 
 	// Iterates through finalColumns and checks for missing columns/null indices
@@ -94,13 +96,13 @@ func ProcessInsertTuple(insertTuple *Database.InsertTupleStatement) (err error) 
 	insertTuple.Columns = finalColumns
 
 	// Creates a new Tuple pointer using the CreateTuple function
-	tuple, err := Database.CreateTuple(table, insertTuple)
+	tuple, err := Storage.CreateTuple(table, insertTuple)
 
 	// Inserts the tuple into the heap
-	Database.InsertTuple(tuple)
+	Storage.InsertTuple(tuple)
 
 	// Encodes the heap and saves it to the file
-	err = EncodeHeap(table.Name)
+	err = Encoders.EncodeHeap(table.Name)
 	if err != nil {
 		return err
 	}

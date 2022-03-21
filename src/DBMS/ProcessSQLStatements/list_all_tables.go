@@ -1,12 +1,12 @@
-package Controller
+package ProcessSQLStatements
 
 import(
-	"GoDBMS/Database"
+	"GoDBMS/Storage"
 )
 
 func ListAllTables() string {
 
-	keyMap := Database.GetTablesMap()
+	keyMap := Storage.GetTablesMap()
 	
 	tables := ""
 
