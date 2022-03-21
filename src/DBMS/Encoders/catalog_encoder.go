@@ -1,7 +1,7 @@
-package Controller
+package Encoders
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/Storage"
 	"log"
 	"encoding/gob"
 	"bytes"
@@ -12,7 +12,7 @@ import (
 func EncodeCatalog() {
 
 	// Get a pointer to the current catalog in memory.
-	catalogPointer := Database.GetTablesMap()
+	catalogPointer := Storage.GetTablesMap()
 	
 	// Encode the catalog pointer into a bytes buffer.
 	var buffer bytes.Buffer
@@ -45,19 +45,19 @@ func DecodeCatalog() {
 		buffer := bytes.NewBuffer(catalogBytes)
 		
 		// Initialize the catalog datastructure.
-		var catalog map[string]*Database.TableSchema
+		var catalog map[string]*Storage.TableSchema
 
 		// Decode the byte buffer into the catalog data structure.
 		dec := gob.NewDecoder(buffer)
 		dec.Decode(&catalog)
 
 		// Load the catalog into memory.
-		Database.LoadTablesMap(&catalog)
+		Storage.LoadTablesMap(&catalog)
 		
 	} else {
 		
 		// If the catalog does not already exist, initliaze an empty catalog
 		// in memory.
-		Database.InitializeTables()
+		Storage.InitializeTables()
 	}
 }

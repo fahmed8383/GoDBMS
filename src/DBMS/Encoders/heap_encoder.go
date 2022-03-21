@@ -1,7 +1,7 @@
-package Controller
+package Encoders
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/Storage"
 	"bytes"
 	"encoding/gob"
 )
@@ -11,7 +11,7 @@ import (
 func EncodeHeap(name string) error {
 
 	// Get a pointer to the current heap in memory.
-	heapPointer := Database.GetHeap()
+	heapPointer := Storage.GetHeap()
 
 	// Encode the heap pointer into a bytes buffer.
 	var buffer bytes.Buffer
@@ -46,20 +46,20 @@ func DecodeHeap(name string) error {
 		buffer := bytes.NewBuffer(heapBytes)
 
 		// Initialize the heap datastructure.
-		var heap []*Database.Tuple
+		var heap []*Storage.Tuple
 
 		// Decode the byte buffer into the heap data structure.
 		dec := gob.NewDecoder(buffer)
 		dec.Decode(&heap)
 
 		// Load the heap into memory.
-		Database.LoadHeap(&heap)
+		Storage.LoadHeap(&heap)
 
 	} else {
 
 		// If the heap does not already exist, initliaze an empty heap
 		// in memory.
-		Database.InitializeHeap()
+		Storage.InitializeHeap()
 	}
 
 	return nil

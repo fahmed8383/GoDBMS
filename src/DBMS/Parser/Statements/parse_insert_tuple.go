@@ -1,14 +1,14 @@
-package SQLParser
+package Statements
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/ParserStructs"
 	"errors"
 	"strings"
 )
 
 // ParseInsertTupleQuery is a function that is used to parse a query
 // and return a InsertTupleStatement struct.
-func parseInsertTupleQuery(query string) (*Database.InsertTupleStatement, error) {
+func ParseInsertTuple(query string) (*ParserStructs.InsertTupleStatement, error) {
 	// Divides the query into three parts: the table name, the column names, and the
 	// values
 	querySplit := strings.Split(query, "(")
@@ -56,7 +56,7 @@ func parseInsertTupleQuery(query string) (*Database.InsertTupleStatement, error)
 	}
 
 	// Initializes the array of InsertTupleColumns
-	columns := []Database.InsertTupleColumn{}
+	columns := []ParserStructs.InsertTupleColumn{}
 
 	// Checks if the number of columns and values are the same
 	if len(getColumns) != len(getValues) {
@@ -66,10 +66,10 @@ func parseInsertTupleQuery(query string) (*Database.InsertTupleStatement, error)
 	// Goes through each column name and value, creates a InsertTupleColumn struct
 	// and then adds them into the array of InsertTupleColumns
 	for i := range getValues {
-		columnStruct := Database.InsertTupleColumn{getColumns[i], getValues[i]}
+		columnStruct := ParserStructs.InsertTupleColumn{getColumns[i], getValues[i]}
 		columns = append(columns, columnStruct)
 	}
 
 	// Returns a new InsertTupleStatement struct pointer based on the query
-	return &Database.InsertTupleStatement{name, columns}, nil
+	return &ParserStructs.InsertTupleStatement{name, columns}, nil
 }

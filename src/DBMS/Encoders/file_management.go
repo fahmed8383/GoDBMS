@@ -1,4 +1,4 @@
-package Controller
+package Encoders
 
 import (
 	"os"

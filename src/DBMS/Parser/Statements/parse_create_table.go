@@ -1,14 +1,14 @@
-package SQLParser
+package Statements
 
 import (
-	"GoDBMS/Database"
+	"GoDBMS/ParserStructs"
     "strings"
 	"errors"
 )
 
-// parseCreateTableQuery is a function that is used to parse the create table query
+// ParseCreateTable is a function that is used to parse the create table query
 // input into the CreateTableStatement struct.
-func parseCreateTableQuery(query string) (*Database.CreateTableStatement, error) {
+func ParseCreateTable(query string) (*ParserStructs.CreateTableStatement, error) {
 
 	// Split the user input at open bracket to seperate the table name and
 	// column info
@@ -33,7 +33,7 @@ func parseCreateTableQuery(query string) (*Database.CreateTableStatement, error)
 	columnsSplit := strings.Split(bracketSplit[1], ",")
 
 	primaryKeyIndex := -1
-	columns := []Database.CreateTableColumn{}
+	columns := []ParserStructs.CreateTableColumn{}
 
 	// Loop through all the columns
 	for i, columnString := range columnsSplit {
@@ -94,7 +94,7 @@ func parseCreateTableQuery(query string) (*Database.CreateTableStatement, error)
 		
 		// Create the column struct from the user input and add it to the 
 		// columns array
-		columnStruct := Database.CreateTableColumn{columnName, columnType, notNull}
+		columnStruct := ParserStructs.CreateTableColumn{columnName, columnType, notNull}
 		columns = append(columns, columnStruct)
 	}
 
@@ -105,5 +105,5 @@ func parseCreateTableQuery(query string) (*Database.CreateTableStatement, error)
 
 	// Create and return the CreateTableStatement struct pointer from the user
 	// input
-	return &Database.CreateTableStatement{name, primaryKeyIndex, columns}, nil
+	return &ParserStructs.CreateTableStatement{name, primaryKeyIndex, columns}, nil
 }
