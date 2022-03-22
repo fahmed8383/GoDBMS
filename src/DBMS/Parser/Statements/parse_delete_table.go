@@ -9,9 +9,12 @@ import (
 func ParseDeleteTable(query string) (*ParserStructs.DeleteTableStatement, error) {
 	
 	querySplit := strings.Split(query, " ")
+
+	if len(querySplit) != 3 {
+		return nil, errors.New("Delete table statement does not contain a table name")
+	}
+
 	name := querySplit[2]
-	
+
 	return &ParserStructs.DeleteTableStatement{name}, nil
-
-	
-
+}

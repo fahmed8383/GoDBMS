@@ -12,11 +12,11 @@ import (
 func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 
 	// If the table name does not exists in the catalog, return an error stating so
-	if !(Storage.TableExists(table.Name)) {
+	if !(Storage.TableExists(table.TableName)) {
 		return errors.New("Can not delete table as it does not exist.")
 	}
 
 	// Otherwise delete the table from the catalog.
-	Storage.DeleteTable(table)
+	Storage.DeleteTable(table.TableName)
 	return nil
 }
