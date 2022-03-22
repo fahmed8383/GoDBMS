@@ -8,6 +8,8 @@ import (
 
 func ParseDeleteTable(query string) (*ParserStructs.DeleteTableStatement, error) {
 	
+	query = strings.Trim(query, " ;")
+
 	querySplit := strings.Split(query, " ")
 
 	if len(querySplit) != 3 {

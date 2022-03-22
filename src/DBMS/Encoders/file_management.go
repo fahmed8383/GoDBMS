@@ -6,7 +6,7 @@ import (
 )
 
 // Constant string for the data directory.
-const dir = "./Data"
+var dir = "./Data"
 
 // IntializeDirectory is a function to ensure that the base directory where
 // all the data files for the database are stored exists.
@@ -54,4 +54,13 @@ func ReadByteFile(name string) ([]byte, error) {
 func WriteByteFile(name string, data []byte) (error) {
 	err := os.WriteFile(dir+"/"+name+".data", data, 0755)
 	return err
+}
+
+func DeleteFile(name string) (error) {
+	err := os.Remove(dir+"/"+name+".data")
+	return err
+}
+
+func SetTestingPath() {
+	dir = "../Data"
 }
