@@ -134,10 +134,10 @@ func TestProcessInsertTuple(t *testing.T) {
    Storage.InitializeTables()
 
    tableStatement := ParserStructs.CreateTableStatement{"insert", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
-      t.Errorf("ERROR: ProcessCreateTable did not go through, %v", errCT)
+   if err != nil {
+      t.Errorf("ERROR: ProcessCreateTable did not go through, %v", err)
    }
 
    insertTuple1 := ParserStructs.InsertTupleColumn{"id", "5"}
@@ -147,20 +147,20 @@ func TestProcessInsertTuple(t *testing.T) {
 
    insertStatement := ParserStructs.InsertTupleStatement{"insert", insertTupleColumns}
 
-   err := ProcessSQLStatements.ProcessInsertTuple(&insertStatement)
+   err = ProcessSQLStatements.ProcessInsertTuple(&insertStatement)
 
    if err != nil {
       t.Errorf("ERROR: ProcessInsertTuple did not go through, %v", err)
    }
 
-   var tupleKey interface{}
-   tupleKey = 1
-
-
-   if Storage.GetTuple(tupleKey, 0).Values[0] != interface{}(5) {
+   if !Storage.TupleExists(interface{}(5), 0) || Storage.GetTuple(interface{}(5), 0).Values[1] != interface{}("Bob") {
       t.Errorf("ERROR: ProcessInsertTuple output gave the wrong tuple value, %v", err)
    }
 
+   err = Encoders.DeleteFile("insert")
+   if err != nil {
+      t.Errorf("ERROR: Unable to delete file, %v", err)
+   }
 }
 
 func TestListAllTables(t *testing.T) {

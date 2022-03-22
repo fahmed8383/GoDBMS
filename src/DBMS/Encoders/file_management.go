@@ -56,6 +56,11 @@ func WriteByteFile(name string, data []byte) (error) {
 	return err
 }
 
+func DeleteFile(name string) (error) {
+	err := os.Remove(dir+"/"+name+".data")
+	return err
+}
+
 func SetTestingPath() {
 	dir = "../Data"
 }
