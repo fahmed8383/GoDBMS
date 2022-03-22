@@ -3,6 +3,7 @@ package ProcessSQLStatements
 import (
 	"GoDBMS/ParserStructs"
 	"GoDBMS/Storage"
+	"GoDBMS/Encoders"
 	"errors"
 )
 
@@ -14,6 +15,10 @@ func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 	// If the table name does not exists in the catalog, return an error stating so
 	if !(Storage.TableExists(table.TableName)) {
 		return errors.New("Can not delete table as it does not exist.")
+	}
+
+	if Encoders.FileExists(table.TableName) {
+		Encoders.DeleteFile(table.TableName)
 	}
 
 	// Otherwise delete the table from the catalog.
