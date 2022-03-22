@@ -41,6 +41,14 @@ type InsertTupleColumn struct {
 	Value string
 }
 
+//SelectStatement holds info indicated by the user for a select statement
 type SelectStatement struct {
+	//TableName is a string representing the name of the table
+	TableName string
+}
+
+//DeleteTableStatement holds info indicated by the user for a delete statement
+type DeleteTableStatement struct {
+	//TableName is a string representing the name of the table
 	TableName string
 }
