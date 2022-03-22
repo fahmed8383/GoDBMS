@@ -1,28 +1,14 @@
-package main
+package Controller
 
 import (
 	p "GoDBMS/Parser"
 	s "GoDBMS/ProcessSQLStatements"
 	"GoDBMS/Encoders"
-	"net/http"
-	"io/ioutil"
 	"os"
 	"strings"
 	"fmt"
 )
 
-func main() {
-
-	InitializeCatalog()
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
-		body, _ := ioutil.ReadAll(r.Body)
-		out := StartDBMS(string(body))
-		w.Write([]byte(out))
-	})
-
-	http.ListenAndServe(":6060", nil)
-}
 
 func InitializeCatalog() {
 	// Initialize the data directory and load the catalog.
