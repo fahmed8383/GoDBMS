@@ -45,7 +45,17 @@ func StartDBMS(query string) (string) {
 		}
 
 		return "Tuple inserted successfully"
+	} else if querySplit[0] == "drop" && querySplit[1] == "table" {
+		output, err := p.ParseDeleteTable(query)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+		err = s.ProcessDeleteTable(output)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
 
+		return "Table deleted successfully"
 	} else if query == "list all tables"{
 		output := s.ListAllTables()
 		return output

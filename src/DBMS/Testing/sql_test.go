@@ -2,7 +2,6 @@ package Testing
 
 import (
 	"testing" 
-	// "fmt"
    "strings"
 	"GoDBMS/ProcessSQLStatements"
 	"GoDBMS/Controller"
@@ -10,14 +9,11 @@ import (
    "GoDBMS/ParserStructs"
    "GoDBMS/Storage"
    "GoDBMS/Encoders"
-   // "errors"
 )
 
 func TestIncorrectCommand(t *testing.T) {
 	query := "hello world" 
 	err := Controller.StartDBMS(query)
-	// fmt.Println(err)
-
 	if err != "Please enter a valid command" {
 		t.Errorf("ERROR: Incorrect command did not give expected error")
 	}
@@ -80,19 +76,7 @@ func TestParseCreateTable(t *testing.T) {
    }
 }
 
-func TestParseInsertTuple(t *testing.T) {
-   query := "insert into person (id, name, age) values (1, Bob, 20);"
 
-   res, err := Parser.ParseInsertTuple(query)
-
-   if err != nil {
-      t.Errorf("ERROR: ParseInsertTuple did not go through")
-   }
-
-   if res.TableName != "person" {
-      t.Errorf("ERROR: ParseInsertTuple output gave the wrong table name, %v", err)
-   }
-}
 
 func TestProcessCreateTable(t *testing.T) {
 
@@ -100,9 +84,9 @@ func TestProcessCreateTable(t *testing.T) {
    Storage.InitializeTables()
 
    tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
+   if err != nil {
       t.Errorf("ERROR: ProcessCreateTable did not go through")
    }
 
@@ -127,8 +111,21 @@ func TestProcessCreateTable(t *testing.T) {
    }
 }
 
+func TestParseInsertTuple(t *testing.T) {
+   query := "insert into person (id, name, age) values (1, Bob, 20);"
+
+   res, err := Parser.ParseInsertTuple(query)
+
+   if err != nil {
+      t.Errorf("ERROR: ParseInsertTuple did not go through")
+   }
+
+   if res.TableName != "person" {
+      t.Errorf("ERROR: ParseInsertTuple output gave the wrong table name, %v", err)
+   }
+}
+
 func TestProcessInsertTuple(t *testing.T) {
-   // query := "insert into person (id, name, age) values (1, Bob, 20);"
 
    Encoders.SetTestingPath()
    Storage.InitializeTables()
@@ -140,7 +137,7 @@ func TestProcessInsertTuple(t *testing.T) {
       t.Errorf("ERROR: ProcessCreateTable did not go through, %v", err)
    }
 
-   insertTuple1 := ParserStructs.InsertTupleColumn{"id", "5"}
+   insertTuple1 := ParserStructs.InsertTupleColumn{"id", "1"}
    insertTuple2 := ParserStructs.InsertTupleColumn{"name", "Bob"}
    insertTuple3 := ParserStructs.InsertTupleColumn{"age", "20"}
    insertTupleColumns := []ParserStructs.InsertTupleColumn{insertTuple1, insertTuple2, insertTuple3}
@@ -153,7 +150,7 @@ func TestProcessInsertTuple(t *testing.T) {
       t.Errorf("ERROR: ProcessInsertTuple did not go through, %v", err)
    }
 
-   if !Storage.TupleExists(interface{}(5), 0) || Storage.GetTuple(interface{}(5), 0).Values[1] != interface{}("Bob") {
+   if !Storage.TupleExists(interface{}(1), 0) || Storage.GetTuple(interface{}(1), 0).Values[1] != interface{}("Bob") {
       t.Errorf("ERROR: ProcessInsertTuple output gave the wrong tuple value, %v", err)
    }
 
@@ -163,44 +160,81 @@ func TestProcessInsertTuple(t *testing.T) {
    }
 }
 
+func TestParseDeleteTable(t *testing.T) {
+   query := "create table person (id int primary key, name string, age int);"
+
+   _, err := Parser.ParseCreateTable(query)
+
+   if err != nil {
+      t.Errorf("ERROR: Create Table command did not go through")
+   }
+
+   query = "delete table person;"
+
+   res, err := Parser.ParseDeleteTable(query)
+
+   if res.TableName != "person" {
+      t.Errorf("ERROR: ParseDeleteTable output gave the wrong table name, %s", res.TableName)
+   }
+}
+
+func TestProcessDeleteTable(t *testing.T) {
+   Encoders.SetTestingPath()
+   Storage.InitializeTables()
+
+   tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessCreateTable did not go through")
+   }
+
+   deleteTableStatement := ParserStructs.DeleteTableStatement{"person"}
+   err = ProcessSQLStatements.ProcessDeleteTable(&deleteTableStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessDeleteTable did not go through")
+   }
+
+   if Storage.TableExists("person") {
+      t.Errorf("ERROR: ProcessDeleteTable did not delete the table")
+   }
+}
+
 func TestListAllTables(t *testing.T) {
 
    Encoders.SetTestingPath()
    Storage.InitializeTables()
 
    tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
+   if err != nil {
       t.Errorf("ERROR: ProcessCreateTable did not go through")
    }
 
    tableStatement = ParserStructs.CreateTableStatement{"person2", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
+   if err != nil {
       t.Errorf("ERROR: ProcessCreateTable did not go through")
    }
 
    tableStatement = ParserStructs.CreateTableStatement{"person3", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
+   if err != nil {
       t.Errorf("ERROR: ProcessCreateTable did not go through")
    }
 
    tableStatement = ParserStructs.CreateTableStatement{"person4", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
-   errCT = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+   err = ProcessSQLStatements.ProcessCreateTable(&tableStatement)
 
-   if errCT != nil {
+   if err != nil {
       t.Errorf("ERROR: ProcessCreateTable did not go through")
    }
 
    tables := ProcessSQLStatements.ListAllTables()
-
-   // if len(tables) != 4 {
-   //    t.Errorf("ERROR: ListAllTables did not return the correct number of tables, %v", err)
-   // }
 
    if !strings.Contains(tables, "person") {
       t.Errorf("ERROR: ListAllTables does not contain all tables")
@@ -214,11 +248,4 @@ func TestListAllTables(t *testing.T) {
    if !strings.Contains(tables, "person4") {
       t.Errorf("ERROR: ListAllTables does not contain all tables %s", "person4")
    }
-   // tablesMap := make(map[string]bool)
-
-
-   // if tables != "person person2 person3 person4" {
-   //    t.Errorf("ERROR: ListAllTables did not list all the tables: %s", tables)
-   // }
-
 }
