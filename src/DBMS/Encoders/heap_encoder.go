@@ -8,10 +8,7 @@ import (
 
 // EncodeHeap is a function to serialize the catalog data structure into
 // bytes that can be written to a data file.
-func EncodeHeap(name string) error {
-
-	// Get a pointer to the current heap in memory.
-	heapPointer := Storage.GetHeap()
+func EncodeHeap(name string, heapPointer *Storage.Heap) error {
 
 	// Encode the heap pointer into a bytes buffer.
 	var buffer bytes.Buffer
@@ -30,7 +27,7 @@ func EncodeHeap(name string) error {
 
 // DecodeHeap is a function to deserialize the heap data structure from
 // a byte data file on the disk.
-func DecodeHeap(name string) error {
+func DecodeHeap(name string) (*Storage.Heap, error) {
 
 	// Check if the heap data file exists.
 	if FileExists(name) {
@@ -39,28 +36,27 @@ func DecodeHeap(name string) error {
 		// that occur during the read.
 		heapBytes, err := ReadByteFile(name)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		// Write the bytes into a byte buffer.
 		buffer := bytes.NewBuffer(heapBytes)
 
 		// Initialize the heap datastructure.
-		var heap []*Storage.Tuple
+		var heap Storage.Heap
 
 		// Decode the byte buffer into the heap data structure.
 		dec := gob.NewDecoder(buffer)
 		dec.Decode(&heap)
 
-		// Load the heap into memory.
-		Storage.LoadHeap(&heap)
+		return &heap, nil
 
 	} else {
 
 		// If the heap does not already exist, initliaze an empty heap
 		// in memory.
-		Storage.InitializeHeap()
+		return Storage.InitializeHeap(), nil
 	}
 
-	return nil
+	return nil, nil
 }
