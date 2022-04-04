@@ -4,6 +4,7 @@ import (
 	"GoDBMS/ParserStructs"
 	"GoDBMS/Storage"
 	"GoDBMS/Encoders"
+	"GoDBMS/StorageLock"
 	"errors"
 )
 
@@ -11,6 +12,8 @@ import (
 // DeleteTableStatement struct and deletes that from the database catalog. It
 // returns any errors that occur.
 func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
+
+	StorageLock.AcquireCatalogLock()
 
 	// If the table name does not exists in the catalog, return an error stating so
 	if !(Storage.TableExists(table.TableName)) {
@@ -23,5 +26,8 @@ func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 
 	// Otherwise delete the table from the catalog.
 	Storage.DeleteTable(table.TableName)
+
+	StorageLock.ReleaseCatalogLock()
+	
 	return nil
 }
