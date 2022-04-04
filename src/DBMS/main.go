@@ -2,6 +2,7 @@ package main
 
 import (
 	"GoDBMS/Controller"
+	"GoDBMS/StorageLock"
 	"net/http"
 	"io/ioutil"
 )
@@ -9,6 +10,7 @@ import (
 func main() {
 
 	Controller.InitializeCatalog()
+	StorageLock.InitializeLocks()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
 		body, _ := ioutil.ReadAll(r.Body)

@@ -17,18 +17,19 @@ func ProcessSelect(selectStatement *ParserStructs.SelectStatement) ([]Storage.Tu
 	}
 
 	// load heap, decode heap
-	err := Encoders.DecodeHeap(table.Name)
+	heap, err := Encoders.DecodeHeap(table.Name)
 	if err != nil {
 		return nil, err
 	}
-	heap := Storage.GetHeap()
 	
-	tuples := []Storage.Tuple{}
+	tuples := heap.GetHeap()
+	
+	newTuples := []Storage.Tuple{}
 
 	// Prints tuples in heap
-	for _, tuple := range *heap {
-		tuples = append(tuples, *tuple)
+	for _, tuple := range tuples {
+		newTuples = append(newTuples, *tuple)
 	}
 
-	return tuples, nil
+	return newTuples, nil
 }

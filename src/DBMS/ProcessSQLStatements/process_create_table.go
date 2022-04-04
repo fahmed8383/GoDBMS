@@ -3,6 +3,7 @@ package ProcessSQLStatements
 import (
 	"GoDBMS/ParserStructs"
 	"GoDBMS/Storage"
+	"GoDBMS/StorageLock"
 	"errors"
 )
 
@@ -11,6 +12,8 @@ import (
 // returns any errors that occur.
 func ProcessCreateTable(table *ParserStructs.CreateTableStatement) (error) {
 
+	StorageLock.AcquireCatalogLock()
+
 	// If the table name already exists in the catalog, return an error stating so
 	if Storage.TableExists(table.Name) {
 		return errors.New("Table with the provided name already exist. Unable to create table.")
@@ -18,5 +21,7 @@ func ProcessCreateTable(table *ParserStructs.CreateTableStatement) (error) {
 
 	// Otherwise insert the table into the catalog.
 	Storage.InsertTable(table)
+
+	StorageLock.ReleaseCatalogLock()
 	return nil
 }

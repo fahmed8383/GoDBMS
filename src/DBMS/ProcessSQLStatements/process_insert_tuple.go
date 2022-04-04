@@ -4,6 +4,7 @@ import (
 	"GoDBMS/ParserStructs"
 	"GoDBMS/Storage"
 	"GoDBMS/Encoders"
+	"GoDBMS/StorageLock"
 	"errors"
 	"strconv"
 )
@@ -25,9 +26,11 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 		return err
 	}
 
+	StorageLock.AcquireTableLock(table.Name)
+
 	// Deserializes the heap from the file and loads it
 	// An error is returned if one occurs
-	err = Encoders.DecodeHeap(table.Name)
+	heap, err := Encoders.DecodeHeap(table.Name)
 	if err != nil {
 		return err
 	}
@@ -52,7 +55,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 
 	// Utilizes the TupleExists function to check if the tuple already exists
 	// If so, it returns an error stating so
-	if Storage.TupleExists(tupleKey, table.PrimaryKeyIndex) {
+	if heap.TupleExists(tupleKey, table.PrimaryKeyIndex) {
 		err = errors.New("Tuple with key " + tupleKeyString + " already exists")
 		return err
 	}
@@ -99,10 +102,12 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	tuple, err := Storage.CreateTuple(table, insertTuple)
 
 	// Inserts the tuple into the heap
-	Storage.InsertTuple(tuple)
+	heap.InsertTuple(tuple)
+
+	StorageLock.ReleaseTableLock(table.Name)
 
 	// Encodes the heap and saves it to the file
-	err = Encoders.EncodeHeap(table.Name)
+	err = Encoders.EncodeHeap(table.Name, heap)
 	if err != nil {
 		return err
 	}
