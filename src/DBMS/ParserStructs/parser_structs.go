@@ -33,7 +33,7 @@ type InsertTupleStatement struct {
 	Columns []InsertTupleColumn
 }
 
-// insertTupleColumn holds the insert tuple query column info received from the user
+// InsertTupleColumn holds the insert tuple query column info received from the user
 type InsertTupleColumn struct {
 	// Name is a string representing name of the column
 	Name string
@@ -41,7 +41,7 @@ type InsertTupleColumn struct {
 	Value string
 }
 
-//SelectStatement holds info indicated by the user for a select statement
+// SelectStatement holds info indicated by the user for a select statement
 type SelectStatement struct {
 	// Select is an array that holds all the select parameters
 	Select []string
@@ -51,8 +51,16 @@ type SelectStatement struct {
 	Where []string
 }
 
-//DeleteTableStatement holds info indicated by the user for a delete statement
+// DeleteTableStatement holds info indicated by the user for a delete statement
 type DeleteTableStatement struct {
 	//TableName is a string representing the name of the table
 	TableName string
+}
+
+// insertTupleColumn holds the delete tuple query info received from the user
+type DeleteTupleStatement struct {
+	// From is an array that holds the table name
+	From string
+	// Where is an array that holds the where column, comparator, and value
+	Where []string
 }
