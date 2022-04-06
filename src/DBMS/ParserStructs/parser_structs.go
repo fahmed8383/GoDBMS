@@ -73,3 +73,4 @@ type ModifyTableStatement struct {
 	ColumnName string
 	// NewDatatype is a string representing the datatype of the new column to be added
 	DataType string
+}

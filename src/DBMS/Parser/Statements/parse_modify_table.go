@@ -4,6 +4,7 @@ import (
 	"GoDBMS/ParserStructs"
     "strings"
 	"errors"
+)
 
 func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error) {
 	
