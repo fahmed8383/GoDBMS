@@ -56,8 +56,19 @@ func StartDBMS(query string) (string) {
 		}
 
 		return "Table deleted successfully"
-	} else if querySplit[1] == "alter" && querySplit[1] == "table" {
+	} else if querySplit[0] == "alter" && querySplit[1] == "table" {
 		//modify table
+		output, err := p.ParseModifyTable(query)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+		err = s.ProcessModifyTable(output)
+
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+
+		return "Table modified successfully"
 	
 	} else if query == "list all tables"{
 		output := s.ListAllTables()

@@ -57,7 +57,7 @@ func (heap *Heap) ModifyTuple(tupleKey interface{}, keyIndex int, newTuple *Tupl
 		return errors.New("tuple does not exist")
 	}
 
-	heap.Tuples[i] = newTuple
+	heap.Tuples[index] = newTuple
 
 	return nil
 }
