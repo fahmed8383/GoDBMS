@@ -43,8 +43,12 @@ type InsertTupleColumn struct {
 
 //SelectStatement holds info indicated by the user for a select statement
 type SelectStatement struct {
-	//TableName is a string representing the name of the table
-	TableName string
+	// Select is an array that holds all the select parameters
+	Select []string
+	// From is an array that holds the table name
+	From string
+	// Where is an array that holds the where column, comparator, and value
+	Where []string
 }
 
 //DeleteTableStatement holds info indicated by the user for a delete statement
