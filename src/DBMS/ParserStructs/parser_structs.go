@@ -52,3 +52,11 @@ type DeleteTableStatement struct {
 	//TableName is a string representing the name of the table
 	TableName string
 }
+
+//ModifyTableStatement holds info indicated by the user for a modify table statement
+type DeleteTableStatement struct {
+	//TableName is a string representing the name of the table to be modified
+	TableName string
+	ColumnName string
+	DataType string
+}

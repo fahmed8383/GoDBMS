@@ -56,6 +56,9 @@ func StartDBMS(query string) (string) {
 		}
 
 		return "Table deleted successfully"
+	} else if querySplit[1] == "alter" && querySplit[1] == "table" {
+		//modify table
+	
 	} else if query == "list all tables"{
 		output := s.ListAllTables()
 		return output

@@ -20,3 +20,8 @@ func ParseSelect(query string) (*ParserStructs.SelectStatement, error) {
 func ParseDeleteTable(query string) (*ParserStructs.DeleteTableStatement, error) {
 	return child.ParseDeleteTable(query)
 }
+
+func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error) {
+	return child.ParseModifyTable(query)
+}
+
