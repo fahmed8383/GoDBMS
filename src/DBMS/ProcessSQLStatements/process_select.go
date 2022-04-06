@@ -65,7 +65,7 @@ func ProcessSelect(selectStatement *ParserStructs.SelectStatement) (string, erro
 	// requirements
 	validTuples := [][]interface{}{}
 
-	// Get the heap for the heap. This contains all the tuple values
+	// Get the heap for the table. This contains all the tuple values
 	heap, err := Encoders.DecodeHeap(tableName)
 	if err != nil {
 		return "", err
