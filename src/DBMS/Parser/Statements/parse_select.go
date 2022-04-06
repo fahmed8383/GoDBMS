@@ -56,8 +56,15 @@ func ParseSelect(query string) (*ParserStructs.SelectStatement, error) {
 	// Make sure where clause actually exists
 	if len(querySplitWhere) > 1 {
 
-		// Make sure where parameter has two values and a comparator
 		whereTrim := strings.Trim(querySplitWhere[1], " ,;")
+		
+		// If where parameter does not have space between operator, return error
+		// asking them to put the appropriate spaces.
+		if strings.Count(whereTrim, " ") != 2 {
+			return nil, errors.New("Please put spaces before and after the comparator in the where clause")
+		}
+
+		// Make sure where parameter has two values and a comparator
 		whereSplit := strings.Split(whereTrim, " ")
 		if len(whereSplit) != 3 {
 			return nil, errors.New("Invalid where parameter")
