@@ -83,7 +83,7 @@ func (heap *Heap) DeleteTuple(tupleKey interface{}, keyIndex int) error {
 	return nil
 }
 
-// GetHeap is a function to return a pointer to the heap.
+// GetHeap is a function to return a pointer to all tuples in the heap
 func (heap *Heap) GetHeap() []*Tuple {
 	return heap.Tuples
 }
