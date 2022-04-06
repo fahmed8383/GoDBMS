@@ -23,6 +23,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 		table = Storage.GetTable(insertTuple.TableName)
 	} else {
 		err = errors.New("Table " + insertTuple.TableName + " does not exist")
+		StorageLock.ReleaseTableLock(table.Name)
 		return err
 	}
 
@@ -32,6 +33,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	// An error is returned if one occurs
 	heap, err := Encoders.DecodeHeap(table.Name)
 	if err != nil {
+		StorageLock.ReleaseTableLock(table.Name)
 		return err
 	}
 
@@ -46,6 +48,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	if table.Columns[table.PrimaryKeyIndex].Datatype == "int" {
 		tupleKey, err = strconv.Atoi(tupleKeyString)
 		if err != nil {
+			StorageLock.ReleaseTableLock(table.Name)
 			return err
 		}
 		// Otherwise it assigns the string value to the interface
@@ -57,6 +60,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	// If so, it returns an error stating so
 	if heap.TupleExists(tupleKey, table.PrimaryKeyIndex) {
 		err = errors.New("Tuple with key " + tupleKeyString + " already exists")
+		StorageLock.ReleaseTableLock(table.Name)
 		return err
 	}
 
@@ -74,6 +78,7 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 		index, exists := table.ColumnIndex[col.Name]
 		if exists != true {
 			err = errors.New("Column " + col.Name + " does not exist")
+			StorageLock.ReleaseTableLock(table.Name)
 			return err
 		}
 		// Stores a new InsertTupleColumn in the finalColumns array at the index
@@ -85,7 +90,8 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	for i, col := range finalColumns {
 		if col.Name == "" {
 			if table.Columns[i].NotNull {
-				err = errors.New("Column " + table.Columns[i].Name + " canot be null")
+				err = errors.New("Column " + table.Columns[i].Name + " cannot be null")
+				StorageLock.ReleaseTableLock(table.Name)
 				return err
 				// If the column can be null, it assigns the name attribute
 			} else {
@@ -104,13 +110,13 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 	// Inserts the tuple into the heap
 	heap.InsertTuple(tuple)
 
-	StorageLock.ReleaseTableLock(table.Name)
-
 	// Encodes the heap and saves it to the file
 	err = Encoders.EncodeHeap(table.Name, heap)
 	if err != nil {
+		StorageLock.ReleaseTableLock(table.Name)
 		return err
 	}
 
+	StorageLock.ReleaseTableLock(table.Name)
 	return nil
 }

@@ -16,6 +16,7 @@ func ProcessCreateTable(table *ParserStructs.CreateTableStatement) (error) {
 
 	// If the table name already exists in the catalog, return an error stating so
 	if Storage.TableExists(table.Name) {
+		StorageLock.ReleaseCatalogLock()
 		return errors.New("Table with the provided name already exist. Unable to create table.")
 	}
 
