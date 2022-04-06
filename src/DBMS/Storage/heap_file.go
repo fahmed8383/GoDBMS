@@ -44,6 +44,24 @@ func (heap *Heap) GetTuple(tupleKey interface{}, keyIndex int) *Tuple {
 	return nil
 }
 
+func (heap *Heap) ModifyTuple(tupleKey interface{}, keyIndex int, newTuple *Tuple) error {
+	index := -1
+	for i, currTuple := range heap.Tuples {
+		if tupleKey == currTuple.Values[keyIndex] {
+			index = i
+			break
+		}
+	}
+
+	if index == -1 {
+		return errors.New("tuple does not exist")
+	}
+
+	heap.Tuples[i] = newTuple
+
+	return nil
+}
+
 // DeleteTuple is a function to remove a tuple from the heap given the key and
 // the index of the key. If the tuple does not exist return an error stating so,
 // otherwise return nil.
