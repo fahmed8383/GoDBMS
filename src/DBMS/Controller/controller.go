@@ -6,7 +6,6 @@ import (
 	"GoDBMS/Encoders"
 	"os"
 	"strings"
-	"fmt"
 )
 
 
@@ -65,12 +64,12 @@ func StartDBMS(query string) (string) {
 			return "ERROR: "+err.Error()
 		}
 
-		tuples, err := s.ProcessSelect(output)
+		searchResult, err := s.ProcessSelect(output)
 		if err != nil {
 			return "ERROR: "+err.Error()
 		}
 
-		return fmt.Sprintf("%v", tuples)
+		return searchResult
 	} else if querySplit[0] == "shutdown" {
 
 		// Save the catalog before exiting.

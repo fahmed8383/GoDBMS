@@ -17,6 +17,7 @@ func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 
 	// If the table name does not exists in the catalog, return an error stating so
 	if !(Storage.TableExists(table.TableName)) {
+		StorageLock.ReleaseCatalogLock()
 		return errors.New("Can not delete table as it does not exist.")
 	}
 
@@ -28,6 +29,5 @@ func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 	Storage.DeleteTable(table.TableName)
 
 	StorageLock.ReleaseCatalogLock()
-	
 	return nil
 }
