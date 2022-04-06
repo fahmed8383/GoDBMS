@@ -20,11 +20,11 @@ type TableSchema struct {
 	// the table.
 	ColumnIndex map[string]int
 	// Columns is an array of tableColumn representing the columns of the table.
-	Columns []tableColumn
+	Columns []TableColumn
 }
 
 // tableColumn is a struct that holds the information about the table's columns.
-type tableColumn struct {
+type TableColumn struct {
 	// Name is a string representing name of the column.
 	Name string
 	// Name is a string representing datatype of the column.
@@ -61,13 +61,13 @@ func InsertTable(tableInfo *ParserStructs.CreateTableStatement){
 
 	// Create a table column mapping and array.
 	columnMap := make(map[string]int)
-	columnsArray := []tableColumn{}
+	columnsArray := []TableColumn{}
 
 	// For each column create a mapping from the column name to its index and
-	// create and add a tableColumn struct to the columnsArray.
+	// create and add a TableColumn struct to the columnsArray.
 	for i, column := range tableInfo.Columns {
 		columnMap[column.Name] = i
-		newColumn := tableColumn{column.Name, column.Datatype, column.NotNull}
+		newColumn := TableColumn{column.Name, column.Datatype, column.NotNull}
 		columnsArray = append(columnsArray, newColumn)
 	}
 

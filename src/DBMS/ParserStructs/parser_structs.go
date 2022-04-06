@@ -57,10 +57,19 @@ type DeleteTableStatement struct {
 	TableName string
 }
 
-// insertTupleColumn holds the delete tuple query info received from the user
+// DeleteTupleStatement holds the delete tuple query info received from the user
 type DeleteTupleStatement struct {
 	// From is an array that holds the table name
 	From string
 	// Where is an array that holds the where column, comparator, and value
 	Where []string
 }
+
+// ModifyTableStatement holds info indicated by the user for a modify table statement
+type ModifyTableStatement struct {
+	// TableName is a string representing the name of the table to be modified
+	TableName string
+	// ColumnName is a string representing the name of the column to be modified
+	ColumnName string
+	// NewDatatype is a string representing the datatype of the new column to be added
+	DataType string
