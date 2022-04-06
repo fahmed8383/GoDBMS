@@ -70,6 +70,17 @@ func StartDBMS(query string) (string) {
 		}
 
 		return searchResult
+	} else if querySplit[0] == "delete" {
+		output, err := p.ParseDeleteTuple(query)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+		err = s.ProcessDeleteTuple(output)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+
+		return "Tuples deleted successfully"
 	} else if querySplit[0] == "shutdown" {
 
 		// Save the catalog before exiting.
