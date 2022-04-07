@@ -12,9 +12,9 @@ func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error)
 
 	querySplit := strings.Split(query, " ")
 
-	TableName := ""
-	ColumnName := ""
-	DataType := ""
+	tableName := ""
+	columnName := ""
+	dataType := ""
 	
 
 	//check if statement has correct number of arguments
@@ -25,15 +25,20 @@ func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error)
 	
 	//check if valid syntax/ which type of alter table statement it is
 	if querySplit[3] == "add" {
-		TableName = querySplit[2]
-		ColumnName = querySplit[4]
-		DataType = querySplit[5]
+		tableName = querySplit[2]
+		columnName = querySplit[4]
+		dataType = querySplit[5]
+
+		if dataType != "int" && dataType != "string" {
+			return nil, errors.New("Invalid column datatype")
+		}
+
 	} else if querySplit[3] == "drop" && querySplit[4] == "column"{
-		TableName = querySplit[2]
-		ColumnName = querySplit[5]
+		tableName = querySplit[2]
+		columnName = querySplit[5]
 	} else {
 		return nil, errors.New("Invalid alter table statement")
 	}
 
-	return &ParserStructs.ModifyTableStatement{TableName, ColumnName, DataType}, nil
+	return &ParserStructs.ModifyTableStatement{tableName, columnName, dataType}, nil
 }

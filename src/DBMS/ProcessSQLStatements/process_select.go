@@ -167,6 +167,11 @@ func ProcessSelect(selectStatement *ParserStructs.SelectStatement) (string, erro
 // getStringVal takes in an interface value and the datatype and returns the corresponding
 // string value
 func getStringVal(val interface{}, dataType string) string {
+
+	if val == nil {
+		return ""
+	}
+
 	if dataType == "string" {
 		return val.(string)
 	} else {
