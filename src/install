@@ -1,0 +1,13 @@
+#!/bin/sh
+
+mkdir GoDBMS
+
+cd ./CLI
+go build
+mv ./CLI ../GoDBMS
+
+cd ..
+
+cd ./DBMS
+go build
+mv ./GoDBMS ../GoDBMS
