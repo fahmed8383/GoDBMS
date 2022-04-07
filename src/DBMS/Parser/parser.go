@@ -28,3 +28,7 @@ func ParseDeleteTuple(query string) (*ParserStructs.DeleteTupleStatement, error)
 func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error) {
 	return child.ParseModifyTable(query)
 }
+
+func ParseModifyTuple(query string) (*ParserStructs.ModifyTupleStatement, error) {
+	return child.ParseModifyTuple(query)
+}
