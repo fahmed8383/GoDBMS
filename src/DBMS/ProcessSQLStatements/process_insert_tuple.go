@@ -23,7 +23,6 @@ func ProcessInsertTuple(insertTuple *ParserStructs.InsertTupleStatement) (err er
 		table = Storage.GetTable(insertTuple.TableName)
 	} else {
 		err = errors.New("Table " + insertTuple.TableName + " does not exist")
-		StorageLock.ReleaseTableLock(table.Name)
 		return err
 	}
 
