@@ -94,7 +94,7 @@ func StartDBMS(query string) (string) {
 			return "ERROR: "+err.Error()
 		}
 
-		return "Tuples deleted successfully"
+		return "Tuple deleted successfully"
 	} else if querySplit[0] == "shutdown" {
 
 		// Save the catalog before exiting.
