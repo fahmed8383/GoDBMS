@@ -116,6 +116,7 @@ func ProcessModifyTable(tableParams *ParserStructs.ModifyTableStatement) (error)
 		}
 	}
 
+	Encoders.EncodeCatalog()
 	StorageLock.ReleaseTableLock(modifyTable.Name)
 	return nil
 }

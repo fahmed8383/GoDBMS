@@ -17,6 +17,12 @@ func InitializeCatalog() {
 
 func StartDBMS(query string) (string) {
 
+	// Make sure input string does not contain delimeter we will be using
+	// to split strings over
+	if strings.Contains(query, "?") {
+		return "ERROR: Query cannot contain special character ?"
+	}
+
 	querySplit := strings.Split(query, " ")
 
 	// If the user input is a 'create table' query call ParseCreateTable
@@ -94,7 +100,18 @@ func StartDBMS(query string) (string) {
 			return "ERROR: "+err.Error()
 		}
 
-		return "Tuple deleted successfully"
+		return "Tuples deleted successfully"
+	} else if querySplit[0] == "update" {
+		output, err := p.ParseModifyTuple(query)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+		err = s.ProcessModifyTuple(output)
+		if err != nil {
+			return "ERROR: "+err.Error()
+		}
+
+		return "Tuples modified successfully"
 	} else if querySplit[0] == "shutdown" {
 
 		// Save the catalog before exiting.

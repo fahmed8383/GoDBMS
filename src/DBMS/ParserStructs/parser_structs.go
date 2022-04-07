@@ -74,3 +74,15 @@ type ModifyTableStatement struct {
 	// NewDatatype is a string representing the datatype of the new column to be added
 	DataType string
 }
+
+// ModifyTupleStatement holds the modify tuple query info received from the user
+type ModifyTupleStatement struct {
+	// TableName is a string representing the name of the table to be modified
+	TableName string
+	// Set is a 2D array of strings where the first index in in the inner array
+	// represents the column to be modifed, and the second index represents
+	// the new value
+	Set [][2]string
+	// Where is an array that holds the where column, comparator, and value
+	Where []string
+}
