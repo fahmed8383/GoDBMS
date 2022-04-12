@@ -6,6 +6,8 @@ import (
 	"errors"
 )
 
+// ParseDeleteTable is a function that is used to parse the delete table query
+// and return a pointer to the DeleteTableStatment struct and any errors.
 func ParseDeleteTable(query string) (*ParserStructs.DeleteTableStatement, error) {
 	
 	query = strings.Trim(query, " ;")

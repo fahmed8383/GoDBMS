@@ -9,7 +9,8 @@ import (
 var dir = "./Data"
 
 // IntializeDirectory is a function to ensure that the base directory where
-// all the data files for the database are stored exists.
+// all the data files for the database are stored exists. If it does not, then
+// create this base directory.
 func InitializeDirectory() {
 
 	// Get the status of the ./Data path.
@@ -56,11 +57,15 @@ func WriteByteFile(name string, data []byte) (error) {
 	return err
 }
 
+// DeleteFile is a function to remove a file from the data directory by the
+// given name input. It returns any errors that may occur during the delete.
 func DeleteFile(name string) (error) {
 	err := os.Remove(dir+"/"+name+".data")
 	return err
 }
 
+// SetTestingPath is a function to change the relative data file path so it can
+// be accessed from the testing directory.
 func SetTestingPath() {
 	dir = "../Data"
 }

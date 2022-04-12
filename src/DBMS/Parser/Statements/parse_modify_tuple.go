@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// ParseModifyTuple is a function that is used to parse a query and return a
-// ModifyTupleStatement struct.
+// ParseModifyTuple is a function that is used to parse the modify tuple query
+// and return a pointer to the ModifyTupleStatment struct and any errors.
 func ParseModifyTuple(query string) (*ParserStructs.ModifyTupleStatement, error) {
 	
 	// Replace set with ? so we can split over the ? delimeter

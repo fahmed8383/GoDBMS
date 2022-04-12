@@ -6,8 +6,8 @@ import (
 	"errors"
 )
 
-// ParseDeleteTuple is a function that is used to parse the delete query and
-// return a pointer to the DeleteTableStatment struct and any errors.
+// ParseDeleteTuple is a function that is used to parse the delete tuple query
+// and return a pointer to the DeleteTupleStatment struct and any errors.
 func ParseDeleteTuple(query string) (*ParserStructs.DeleteTupleStatement, error) {
 
 	// Replace where with ? so we can split over the ? delimeter

@@ -8,6 +8,10 @@ import (
 	"errors"
 )
 
+// ProcessModifyTable is a function that takes in a pointer to the
+// DeleteTableStatement struct and modifies the table schema in the catalog, as
+// well as update all tuples in the heap file of that table. It returns any
+// errors that occur.
 func ProcessModifyTable(tableParams *ParserStructs.ModifyTableStatement) (error) {
 
 	// If the table name does not exists in the catalog, return an error stating so

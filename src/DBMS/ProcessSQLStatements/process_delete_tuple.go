@@ -9,9 +9,9 @@ import (
 	"errors"
 )
 
-// ProcessSelect is a function that handles the searching of a table from
-// the database. It takes an InsertTupleStatement pointer as an argument a
-// a string with the search results and any errors
+// ProcessDeleteTuple is a function that takes in a pointer to the
+// DeleteTupleStatement struct and deletes that tuple from its appropriate heap
+// file. It returns any errors that occur.
 func ProcessDeleteTuple(deleteTuple *ParserStructs.DeleteTupleStatement) error {
 
 	// Check if where is present in delete statement

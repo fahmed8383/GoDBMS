@@ -29,7 +29,7 @@ type CreateTableColumn struct {
 type InsertTupleStatement struct {
 	// TableName is a string representing name of the table
 	TableName string
-	// Columns is an array of insertTupleColumn representing the columns
+	// Columns is an array of InsertTupleColumn representing the columns
 	Columns []InsertTupleColumn
 }
 
@@ -71,7 +71,7 @@ type ModifyTableStatement struct {
 	TableName string
 	// ColumnName is a string representing the name of the column to be modified
 	ColumnName string
-	// NewDatatype is a string representing the datatype of the new column to be added
+	// Datatype is a string representing the datatype of the new column to be added
 	DataType string
 }
 

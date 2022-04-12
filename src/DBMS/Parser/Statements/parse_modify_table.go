@@ -6,6 +6,8 @@ import (
 	"errors"
 )
 
+// ParseModifyTable is a function that is used to parse the modify table query
+// and return a pointer to the ModifyTableStatment struct and any errors.
 func ParseModifyTable(query string) (*ParserStructs.ModifyTableStatement, error) {
 	
 	query = strings.Trim(query, " ;")

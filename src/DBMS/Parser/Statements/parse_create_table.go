@@ -7,7 +7,7 @@ import (
 )
 
 // ParseCreateTable is a function that is used to parse the create table query
-// input into the CreateTableStatement struct.
+// and return a pointer to the CreateTableStatment struct and any errors.
 func ParseCreateTable(query string) (*ParserStructs.CreateTableStatement, error) {
 
 	// Split the user input at open bracket to seperate the table name and

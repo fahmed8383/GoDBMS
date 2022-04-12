@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-// ParseInsertTupleQuery is a function that is used to parse a query
-// and return a InsertTupleStatement struct.
+// ParseInsertTuple is a function that is used to parse the delete tuple query
+// and return a pointer to the InsertTupleStatment struct and any errors.
 func ParseInsertTuple(query string) (*ParserStructs.InsertTupleStatement, error) {
 	// Divides the query into three parts: the table name, the column names, and the
 	// values
