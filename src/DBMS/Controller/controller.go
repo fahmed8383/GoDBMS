@@ -8,13 +8,17 @@ import (
 	"strings"
 )
 
-
+// InitializeCatalog is a function to intialize the data file directory
+// and decode the catalog file to load it into memory.
 func InitializeCatalog() {
 	// Initialize the data directory and load the catalog.
 	Encoders.InitializeDirectory()
 	Encoders.DecodeCatalog()
 }
 
+// StartDBMS is a function that takes in a string query, passes it to the
+// appropriate parser and controller, and then returns the output of the query
+// as a string.
 func StartDBMS(query string) (string) {
 
 	// Make sure input string does not contain delimeter we will be using
@@ -25,7 +29,7 @@ func StartDBMS(query string) (string) {
 
 	querySplit := strings.Split(query, " ")
 
-	// If the user input is a 'create table' query call ParseCreateTable
+	// Look through input query's words to see what type of SQL command it is.
 	if querySplit[0] == "create" && querySplit[1] == "table" {
 		output, err := p.ParseCreateTable(query)
 		if err != nil {

@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 )
 
+// Main function to run the CLI
 func main() {
 	fmt.Println("Welcome to GoDBMS")
 	fmt.Println("Please enter a query")

@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 )
 
+// Main function for the DBMS, this intializes the catalog and locks and then
+// starts the http server on port 6060.
 func main() {
 
 	Controller.InitializeCatalog()

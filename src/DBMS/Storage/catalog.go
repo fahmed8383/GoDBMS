@@ -27,7 +27,7 @@ type TableSchema struct {
 type TableColumn struct {
 	// Name is a string representing name of the column.
 	Name string
-	// Name is a string representing datatype of the column.
+	// Datatype is a string representing datatype of the column.
 	Datatype string
 	// NotNull is a boolean representing whether the entries into the column
 	// can be null or not.

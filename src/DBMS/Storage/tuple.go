@@ -10,7 +10,8 @@ type Tuple struct {
 	Values []interface{}
 }
 
-// Constructor function to initialize a Tuple and return a pointer to the tuple
+// CreateTuple is a Constructor function to initialize a Tuple and return a 
+// pointer to the tuple
 func CreateTuple(table *TableSchema, insertQuery *s.InsertTupleStatement) (*Tuple, error) {
 	// Creates a new array with interface{} type to accept multiple data types
 	values := []interface{}{}

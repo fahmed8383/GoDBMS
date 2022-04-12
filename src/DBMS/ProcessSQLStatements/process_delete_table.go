@@ -9,8 +9,8 @@ import (
 )
 
 // ProcessDeleteTable is a function that takes in a pointer to the
-// DeleteTableStatement struct and deletes that from the database catalog. It
-// returns any errors that occur.
+// DeleteTableStatement struct and deletes that table from the database catalog.
+// It returns any errors that occur.
 func ProcessDeleteTable(table *ParserStructs.DeleteTableStatement) (error) {
 
 	StorageLock.AcquireCatalogLock()
