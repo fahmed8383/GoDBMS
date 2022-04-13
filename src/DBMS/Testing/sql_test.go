@@ -173,49 +173,49 @@ func TestParseInsertTuple(t *testing.T) {
 }
 
 // IP-BE5-T1
-// func TestParseModifyTupleMissingTable(t *testing.T) {
-//    query := "update ..."
+func TestParseModifyTupleMissingTable(t *testing.T) {
+   query := "update set name = Bob where id = 1;"
 
-//    _, err := Parser.ParseModifyTuple(query)
+   _, err := Parser.ParseModifyTuple(query)
 
-//    if err == nil {
-//       t.Errorf("ERROR: ParseModifyTuple did not give expected error")
-//    }
-// }
+   if err == nil {
+      t.Errorf("ERROR: ParseModifyTuple did not give expected error")
+   }
+}
 
 // IP-BE5-T2
-// func TestParseModifyTuplePrimaryKey(t *testing.T) {
-//    query := "update ..."
+func TestParseModifyTuplePrimaryKey(t *testing.T) {
+   query := "update person set name = Bob where"
 
-//    _, err := Parser.ParseModifyTuple(query)
+   _, err := Parser.ParseModifyTuple(query)
 
-//    if err == nil {
-//       t.Errorf("ERROR: ParseModifyTuple did not give expected error")
-//    }
-// }
+   if err == nil {
+      t.Errorf("ERROR: ParseModifyTuple did not give expected error")
+   }
+}
 
 // IP-BE5-T3
-// func TestParseModifyTupleMissingValue(t *testing.T) {
-//    query := "update ..."
+func TestParseModifyTupleMissingValue(t *testing.T) {
+   query := "update person set where id = 1;"
 
-//    _, err := Parser.ParseModifyTuple(query)
+   _, err := Parser.ParseModifyTuple(query)
 
-//    if err == nil {
-//       t.Errorf("ERROR: ParseModifyTuple did not give expected error")
-//    }
-// }
+   if err == nil {
+      t.Errorf("ERROR: ParseModifyTuple did not give expected error")
+   }
+}
 
 // IP-BE5-T4
-// func TestParseModifyTuple(t *testing.T) {
-//    query := "update ..."
+func TestParseModifyTuple(t *testing.T) {
+   query := "update person set name = Bob where id = 1;"
 
-//    res, err := Parser.ParseModifyTuple(query)
+   _, err := Parser.ParseModifyTuple(query)
 
-//    if err != nil {
-//       t.Errorf("ERROR: ParseModifyTuple did not go through")
-//    }
+   if err != nil {
+      t.Errorf("ERROR: ParseModifyTuple did not go through")
+   }
 
-// }
+}
 
 // IP-BE6-T1
 func TestParseDeleteTupleMissingTable(t *testing.T) {
@@ -228,19 +228,16 @@ func TestParseDeleteTupleMissingTable(t *testing.T) {
    }
 }
 
-
-// Test currently not working
-
 // IP-BE6-T2
-// func TestParseDeleteTupleMissingPrimaryKey(t *testing.T) {
-//    query := "delete from person"
+func TestParseDeleteTupleMissingPrimaryKey(t *testing.T) {
+   query := "delete from person where"
 
-//    _, err := Parser.ParseDeleteTuple(query)
+   _, err := Parser.ParseDeleteTuple(query)
 
-//    if err == nil {
-//       t.Errorf("ERROR: ParseDeleteTuple did not give expected error")
-//    }
-// }
+   if err == nil {
+      t.Errorf("ERROR: ParseDeleteTuple did not give expected error")
+   }
+}
 
 // IP-BE6-T3
 func TestParseDeleteTuple(t *testing.T) {
@@ -509,12 +506,144 @@ func TestProcessInsertTupleWrongTable(t *testing.T) {
 
 // SD-BE5-T2
 // modify the record correctly
+func TestProcessModifyTuple(t *testing.T) {
+
+   Encoders.SetTestingPath()
+   Storage.InitializeTables()
+   StorageLock.InitializeLocks()
+
+   tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessCreateTable did not go through, %v", err)
+   }
+
+   insertTuple1 := ParserStructs.InsertTupleColumn{"id", "1"}
+   insertTuple2 := ParserStructs.InsertTupleColumn{"name", "Bob"}
+   insertTuple3 := ParserStructs.InsertTupleColumn{"age", "20"}
+   insertTupleColumns := []ParserStructs.InsertTupleColumn{insertTuple1, insertTuple2, insertTuple3}
+
+   insertStatement := ParserStructs.InsertTupleStatement{"person", insertTupleColumns}
+
+   err = ProcessSQLStatements.ProcessInsertTuple(&insertStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessInsertTuple did not go through, %v", err)
+   }
+   
+   query := "update person set name = John where id = 1;"
+
+   modifyStatement, err := Parser.ParseModifyTuple(query)
+
+   if err != nil {
+      t.Errorf("ERROR: ParseModifyTuple did not go through, %v", err)
+   }
+
+   err = ProcessSQLStatements.ProcessModifyTuple(modifyStatement)
+   if err != nil {
+      t.Errorf("ERROR: ProcessModifyTuple did not go through, %v", err)
+   }
+
+   err = Encoders.DeleteFile("person")
+   if err != nil {
+      t.Errorf("ERROR: Unable to delete file, %v", err)
+   }
+}
 
 // SD-BE5-T3
 // modify the record in an incorrect table
+func TestProcessModifyTupleWrongTable(t *testing.T) {
+
+   Encoders.SetTestingPath()
+   Storage.InitializeTables()
+   StorageLock.InitializeLocks()
+
+   tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessCreateTable did not go through, %v", err)
+   }
+
+   insertTuple1 := ParserStructs.InsertTupleColumn{"id", "1"}
+   insertTuple2 := ParserStructs.InsertTupleColumn{"name", "Bob"}
+   insertTuple3 := ParserStructs.InsertTupleColumn{"age", "20"}
+   insertTupleColumns := []ParserStructs.InsertTupleColumn{insertTuple1, insertTuple2, insertTuple3}
+
+   insertStatement := ParserStructs.InsertTupleStatement{"person", insertTupleColumns}
+
+   err = ProcessSQLStatements.ProcessInsertTuple(&insertStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessInsertTuple did not go through, %v", err)
+   }
+   
+   query := "update wrongTable set name = John where id = 1;"
+
+   modifyStatement, err := Parser.ParseModifyTuple(query)
+
+   if err != nil {
+      t.Errorf("ERROR: ParseModifyTuple did not go through, %v", err)
+   }
+
+   err = ProcessSQLStatements.ProcessModifyTuple(modifyStatement)
+   if err == nil {
+      t.Errorf("ERROR: ProcessModifyTuple did not go through, %v", err)
+   }
+
+   err = Encoders.DeleteFile("person")
+   if err != nil {
+      t.Errorf("ERROR: Unable to delete file, %v", err)
+   }
+}
 
 // SD-BE5-T4
 // modify the record with incorrect primary key
+func TestProcessModifyTupleWrongPrimaryKey(t *testing.T) {
+
+   Encoders.SetTestingPath()
+   Storage.InitializeTables()
+   StorageLock.InitializeLocks()
+
+   tableStatement := ParserStructs.CreateTableStatement{"person", 0, []ParserStructs.CreateTableColumn{ParserStructs.CreateTableColumn{"id", "int", true}, ParserStructs.CreateTableColumn{"name", "string", false}, ParserStructs.CreateTableColumn{"age", "int", false}}}
+   err := ProcessSQLStatements.ProcessCreateTable(&tableStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessCreateTable did not go through, %v", err)
+   }
+
+   insertTuple1 := ParserStructs.InsertTupleColumn{"id", "1"}
+   insertTuple2 := ParserStructs.InsertTupleColumn{"name", "Bob"}
+   insertTuple3 := ParserStructs.InsertTupleColumn{"age", "20"}
+   insertTupleColumns := []ParserStructs.InsertTupleColumn{insertTuple1, insertTuple2, insertTuple3}
+
+   insertStatement := ParserStructs.InsertTupleStatement{"person", insertTupleColumns}
+
+   err = ProcessSQLStatements.ProcessInsertTuple(&insertStatement)
+
+   if err != nil {
+      t.Errorf("ERROR: ProcessInsertTuple did not go through, %v", err)
+   }
+   
+   query := "update person set name = John where id = 5;"
+
+   modifyStatement, err := Parser.ParseModifyTuple(query)
+
+   if err != nil {
+      t.Errorf("ERROR: ParseModifyTuple did not go through, %v", err)
+   }
+
+   err = ProcessSQLStatements.ProcessModifyTuple(modifyStatement)
+   if err != nil {
+      t.Errorf("ERROR: ProcessModifyTuple did not go through, %v", err)
+   }
+
+   err = Encoders.DeleteFile("person")
+   if err != nil {
+      t.Errorf("ERROR: Unable to delete file, %v", err)
+   }
+}
 
 // SD-BE6-T2
 func TestProcessDeleteTuple(t *testing.T) {
