@@ -1,16 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2022-01-30" view-index="0" gantt-divider-location="439" resource-divider-location="300" version="3.1.3100" locale="en_CA">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2022-01-30" view-index="0" gantt-divider-location="419" resource-divider-location="300" version="3.2.3230" locale="en_CA">
     <description/>
     <view zooming-state="default:6" id="gantt-chart">
-        <field id="tpd3" name="Name" width="205" order="0"/>
-        <field id="tpd4" name="Begin date" width="107" order="1"/>
-        <field id="tpd5" name="End date" width="106" order="2"/>
+        <field id="tpd3" name="Name" width="198" order="0"/>
+        <field id="tpd4" name="Begin date" width="103" order="1"/>
+        <field id="tpd5" name="End date" width="102" order="2"/>
+        <option id="filter.completedTasks" value="false"/>
         <timeline>
             <![CDATA[5]]>
         </timeline>
     </view>
     <view id="resource-table">
-        <field id="0" name="Name" width="209" order="0"/>
-        <field id="1" name="Default role" width="85" order="1"/>
+        <field id="0" name="Name" width="199" order="0"/>
+        <field id="1" name="Default role" width="82" order="1"/>
     </view>
     <!-- -->
     <calendars>
@@ -72,7 +73,11 @@
             <task id="114" name="Functional Tests" color="#8cb6ce" meeting="false" start="2022-03-28" duration="9" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
             <task id="121" name="Non-Functional Tests" color="#8cb6ce" meeting="false" start="2022-03-28" duration="9" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
         </task>
-        <task id="10" name="Final Documentation" color="#8cb6ce" meeting="false" start="2022-04-08" duration="5" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true"/>
+        <task id="10" name="Final Documentation" color="#8cb6ce" meeting="false" start="2022-04-06" duration="7" complete="0" thirdDate="2022-02-03" thirdDate-constraint="0" expand="true">
+            <task id="124" name="Added Test Report" color="#8cb6ce" meeting="false" start="2022-04-10" duration="2" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+            <task id="123" name="Updated Documents" color="#8cb6ce" meeting="false" start="2022-04-10" duration="3" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+            <task id="122" name="Update Comments" color="#8cb6ce" meeting="false" start="2022-04-06" duration="4" complete="0" thirdDate="2022-01-30" thirdDate-constraint="0" expand="true"/>
+        </task>
     </tasks>
     <resources>
         <resource id="0" name="Faiq" function="Default:0" contacts="" phone=""/>
