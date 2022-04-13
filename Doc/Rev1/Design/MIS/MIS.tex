@@ -1,0 +1,992 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[titletoc,title]{appendix}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hhline}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage[normalem]{ulem}
+\usepackage{xcolor}
+\usepackage{ulem}
+
+\pagestyle {plain}
+\pagenumbering{arabic}
+\setcounter{secnumdepth}{0}
+
+\usepackage{color}
+
+\title{3XA3 Module Interface Specification\\ GoDBMS} 
+\author{Team \#7, Databased
+    \\ Eesha Qureshi, qureshe
+    \\ Faiq Ahmed, ahmedf46
+    \\ Kevin Kannammalil, kannammk}
+
+\date{March 18, 2022}
+
+
+\begin {document}
+ 
+\maketitle
+\newpage
+\tableofcontents
+\listoftables
+\listoffigures
+
+\newpage
+\begin{table}[h]
+\caption{\bf Revision History}
+\begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
+\toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
+\midrule
+March 16, 2022 & 1.0 & Initial Document\\
+March 17, 2022 & 1.1 & Wrote MIS for half the modules\\
+March 18, 2022 & 1.2 & Finished MIS for all modules\\
+{\color{red}April 12, 2022} & {\color{red}1.3} & {\color{red}Modified MIS and added new modules}\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% process_create_table
+% process_insert_tuple
+% process_select
+% list_all_tables
+% heap_encoder
+% storage_lock
+\newpage
+
+\section {CLI Module}
+
+\subsection{Module}
+CLI
+
+\subsection {Uses}
+Http Server
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+\sout{StartCLI} {\color{red} main}& & & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+Keyboard\\
+Monitor screen
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent \sout{StartCLI()} {\color{red} main()}: Take user input from the keyboard directly from a command line continuously and convert the string to lowercase. If this string is "quit" then immediately exit the loop, otherwise send this string to the http server with a post request. The returned string response from the http server is then printed our to the monitor screen.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Controller Module}
+
+\subsection{Module}
+Controller
+
+\subsection {Uses}
+Http Server, Parser, Process SQL Statements, Catalog Encoder
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitializeCatalog & & & \\
+StartDBMS & & & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+N/A
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+The CLI has been started to be able to send inputs to the controller through the http server
+
+\subsubsection{Access Routine Semantics}
+\noindent startDBMS(): Receives input from the http server as a string. If the string starts with "update", send the string to Parser.ParseModifyRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessModifyRecord(). Otherwise if the string starts with "insert", send the string to Parser.ParseInsertRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessInsertRecord(). Otherwise if the string starts with "create", send the string to Parser.ParseCreateTable(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessCreateTable(). Otherwise if the string starts with "drop table", send the string to Parser.ParseDeleteTable(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessDeleteTable(). Otherwise if the string starts with "delete", send the string to Parser.ParseDeleteRecord(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessDeleteRecord(). Otherwise if the string starts with "select", send the string to Parser.ParseSelect(), if an error is not returned, send the values of the returned output struct to ProcessSQLStatements.ProcessSelect(). Otherwise if the string is "shut down", call the CatalogEncoder.EncodeCatalog() function and return. Otherwise return an error stating that the query was invalid. If an error is returned by Parser or ProcessSQLStatement at any point, immediately send the error back to the http server as a response and return. If no error is returned, send a success message or the output of the ProcessSQLStatement function back to the http server.\\
+
+\noindent InitializeCatalog(): Call the CatalogEncoder.DecodeCatalog() function.
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Process SQL Statements}
+
+\subsection{Module}
+Process SQL Statements
+
+\subsection {Uses}
+Storage Lock, Storage Encoder, Heap File, Catalog, {\color{red} Parser Structs}.
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} \\
+\hline
+ProcessCreateTable & {\color{red} ParserStructs.CreateTableStatement struct} & error \\
+\hline
+ProcessInsertRecord & {\color{red} ParserStructs.InsertTupleStatement struct}  & error \\
+\hline
+ProcessSelect & {\color{red} ParserStructs.SelectStatement struct}  & {\color{red} String}, error \\
+\hline
+ProcessDeleteTable & {\color{red} ParserStructs.DeleteTableStatement struct}  & error \\
+\hline
+ProcessDeleteRecord & {\color{red} ParserStructs.DeleteTupleStatement struct}  & error \\
+\hline
+{\color{red}ProcessModifyRecord} & {\color{red} ParserStructs.ModifyTableStatement} & {\color{red}error} \\
+\hline
+ProcessModifyRecord & {\color{red} ParserStructs.ModifyTupleStatement} & error \\
+\hline
+ListAllTables &  & {\color{red} String} \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+
+N/A
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+N/A
+
+\subsubsection {Assumptions}
+N/A
+
+
+\subsubsection {Access Routine Semantics}
+
+\noindent ProcessCreateTable({\color{red}struct}): Receives the fields of the statement from the parameter and does the error handling. It checks if the table name already exists, if so it returns an error. After the error handling, passes the fields into the InsertTable function in the Catalog module. It then gets a heap pointer when it creates a heap for the table using the Heap File module and uses the heap pointer to encode the heap into a file. The function returns nil to indicate there are no errors. \\
+
+\noindent ProcessInsertRecord({\color{red}struct}): Receives the fields that represents the insert statement to store a record into the database. It validates the query with multiple checks to ensure it follows the constraints. It decodes the table from the heap using Storage Encoder. It does error handling by checking if the table it is inserting into exists, verifies the primary key validity and duplicate record. Then it extracts the values from the insert statement and passes it to the Heap File to create the record and store in the storage. Finally it encodes the heap again once it's done with the process. \\
+
+\noindent ProcessSelect({\color{red}struct}): Receives the table name and a set of conditions to retrieve the records in that table. It decodes the heap to access the records, filters the records to what is desired and returns it. \\
+
+\noindent ProcessDeleteTable({\color{red}struct}): Receives the table name to delete from the database. It sends the table name to the Storage Encoder module to delete the file and then erases the table in Catalog and the lock in Storage Lock. \\
+
+\noindent ProcessDeleteRecord({\color{red}struct}): Receives the name to retrieve the heap, then it uses the primaryKeyIndex to delete the record from the heap. It then encodes the heap and stores it back into a file. \\ 
+
+\noindent {\color{red}ProcessModifyTable(struct): Uses the struct to get table and columns to modify before making the appropriate modification in the heap of that table and the catalog.} \\
+
+\noindent ProcessModifyRecord({\color{red}struct}): Uses the table name and primary key index to find the record using Catalog and then modify the value of the column in that record. \\
+
+\noindent ListAllTables(): Retrieves the table map from Catalog to and returns the existing tables as an array \\
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Storage Encoder Module}
+
+\subsection{Module}
+Storage Encoder
+
+\subsection {Uses}
+File Management
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+EncodeHeap & HeapStruct & error & \\
+\hline
+DecodeHeap & name & HeapStruct & \\
+\hline
+\sout{DeleteHeap} & \sout{name} & \sout{error} & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+N/A
+\subsubsection {Environment Variables}
+N/A
+\subsubsection {State Invariant}
+N/A
+\subsubsection {Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent EncodeHeap(heap): Receives the heap pointer to write it into the file. It returns any errors that it encounters when writing to the file. \\
+
+\noindent DecodeHeap(name): Receives the table name and checks if the file exists for that table name, if not it returns an error. It reads the file and saves the data onto a heap which it loads into the memory. It returns the heap pointer to be used in other modules. \\ 
+
+\noindent \sout{DeleteHeap(name): Receives the table name to retrieve the heap and delete the file using the File Management module.} \\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Storage Lock}
+
+\subsection{Module}
+Storage Lock
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red} IntializeLocks} & & & \\
+\hline
+{\color{red} AcquireTableLock} & name &  & \\
+\hline
+{\color{red} ReleaseTableLock} & name &  & \\
+\hline
+\sout{DeleteLock} & \sout{name} &  & \\
+\hline
+{\color{red} AcquireCatalogLock} & name &  & \\
+\hline
+{\color{red} ReleaseCatalogLock} & name &  & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+$TableLocks$: map of locks for their corresponding table\\
+{\color{red} $CatalogLock$ : lock for the catalog}
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+
+\noindent {\color{red} InitializeLocks(): Initializes the catalog and take locks so they can be used}\\
+
+\noindent {\color{red}AcquireTableLock(name)}: Creates a lock for a specific table using the name and stores it into $TableLocks$, so it can be accessed by other modules. \\
+
+\noindent {\color{red}ReleaseTableLock(name)}: Retrieves the lock from the TableLocks map based on the table name and releases the lock. \\
+
+\noindent \sout{DeleteLock(name): Receives the name to remove the lock from the TableLocks map which would be deleting it.} \\
+
+\noindent {\color{red} AcquireCatalogLock(): Acquires the lock for the catalog so no other transaction can modify the catalog at the same time}\\
+
+\noindent {\color{red} ReleaseCatalogLock(): Releases the lock for the catalog}\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{CatalogEncoder}
+
+\subsection{Module}
+CatalogEncoder
+
+\subsection{Uses}
+Catalog, File Management
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+EncodeCatalog & & & \\
+DecodeCatalog & & & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent EncodeCatalog(): Calls function Catalog.GetTablesMap() to get a reference to the catalog which is then converted into a byte array before being saved passing in the byte array to FileManagement.WriteByteFile().\\
+
+\noindent DecodeCatalog(): Passes in the string "catalog" to FileManagement.WriteByteFile() get a byte array which is then converted to a catalog reference before being passed into Catalog.StoreTableMap() to load the catalog into memory.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{File Management}
+
+\subsection{Module}
+File Management
+
+\subsection{Uses}
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+directory string
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+FileExists & string & bool & \\
+ReadByteFile & string & seq of byte, {\color{red} error} & \\
+WriteByteFile & string, seq of byte & {\color{red} error} & \\
+DeleteFile & string & {\color{red} error} &\\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent FileExists(name): Looks too see if file by the specified input name exists in the data directory. If directory does not exist or file does not exist, return false. Otherwise return true.\\
+
+\noindent ReadByteFile(name): Checks to see if the data directory exists, if it does not exist, it creates it using the initializeDirectory() local function. The function then looks for a file by the specified input name, if it is able to find the file it reads the bytes from the file and returns the byte array.\\
+
+\noindent ReadByteFile(name, bytes): Checks to see if the data directory exists, if it does not exist, it creates it using the initializeDirectory() local function. The function then create a new file with the specified input name and adds the specified input bytes to it before saving the file.\\
+
+\noindent DeleteFile(name): Looks to see if file by the specified input name exists in the data directory. If the directory and file exist, then it deletes the file with the specified input name.\\
+
+\subsection{Local Functions/Constants}
+\noindent initializeDirectory(): Create a new directory in location specified by the directory constant.
+
+\newpage
+
+\section{Catalog}
+
+\subsection{Module}
+Catalog
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+LoadTablesMap & map of structs & & \\
+GetTablesMap & & map of structs & \\
+TableExists & string & bool & \\
+InsertTable & struct & & \\
+GetTable & string & struct & \\
+DeleteTable & string & & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+catalog: map of structs
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent LoadTablesMap(newCatalog): This methods sets the catalog state variable to newCatalog.\\
+
+\noindent GetTablesMap(): This methods returns the catalog state variable.\\
+
+\noindent TableExists(name): This method checks if the catalog map state variable has a key with the specified name in it. If it does it return true, else it returns false.\\
+
+\noindent GetTable(name): This method gets the struct stored at key name in the catalog state variable and returns it.\\
+
+\noindent Delete(name): This method removes the entry by with the specified key name from the catalog state variable.\\
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Heap File}
+
+\subsection{Module}
+Heap File
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+HeapStruct
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+InitializeHeap &  & this instance of HeapStruct & \\
+{\color{red}InsertTuple} & Tuple struct & & \\
+{\color{red}TupleExists} & {\color{red}any type, integer} & bool & \\
+{\color{red}GetTuple} & {\color{red}any type, integer} & Tuple struct & \\
+\sout{ModifyRecord} & \sout{integer, any type, seq of any type} & &\\ 
+{\color{red}DeleteTuple} & {\color{red}any type, integer} & {\color{red} error} & \\
+{\color{red}GetHeap} & & {\color{red} seq of Tuple struct} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+heap: seq of seq of any type
+
+\subsubsection{Environment Variables}
+N/A
+\subsubsection{State Invariant}
+N/A
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent InitializeHeap(): Set heap to an empty array and return the HeapStruct.\\
+
+\noindent {\color{red}InsertTuple(tuple)}: Setter method on the HeapStruct that adds {\color{red}tuple} to current heap in current instance. \\
+
+\noindent {\color{red}TupleExists(value, keyIndex)}: This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, return true, else return false.\\
+
+\noindent {\color{red}GetTuple(value, keyIndex)}: This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then return that nested array.\\
+
+\noindent \sout{ModifyRecord(keyIndex, value, newValues): This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then it overwrites that nest array with newValues in the heap array.}\\
+
+\noindent {\color{red}DeleteTuple(value, keyIndex)}: This method checks if the specified value exists in the keyIndex index of any nested array in the heap of the current instance. If it does, then remove that nested array from the heap array.\\
+
+\noindent {\color{red}GetHeap(): This function is used to return a sequence of all the tuples in the heap.}
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section {Parser}
+
+\subsection{Module}
+
+\subsection {Uses}
+Parse Modify Record, Parse Create Table, Parse Insert Record, Parse Select, Parse Delete Table, Parse Delete Record, {\color{red} Parse Modify Table, Parser Structs}.
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+ParseCreateTable & String & struct, error & \\
+\hline
+{\color{red}ParseInsertTuple} & String & struct, error & \\
+\hline
+ParseSelect & String & struct, error & \\
+\hline
+ParseDeleteTable & String & struct, error & \\
+\hline
+{\color{red}ParseDeleteTuple} & String & struct, error & \\
+\hline
+{\color{red}ParseModifyTuple} & String & struct, error & \\
+\hline
+{\color{red}ParseModifyTable} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection {Semantics}
+
+\subsubsection {State Variables}
+
+N/A
+
+\subsubsection {Environment Variables}
+N/A
+
+\subsubsection {State Invariant}
+N/A
+
+\subsubsection {Assumptions}
+N/A
+
+
+\subsubsection {Access Routine Semantics}
+
+\noindent ParseCreateTable(input): \sout{Reads the String input from standard input then parses and splits it to return string representing table name, string representing primary key index, and 2D String array representing columns and sends this info to InitParseCreateTable in the Parse Create Table module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Create Table module function and return its output} \\
+
+\noindent {\color{red}ParseInsertTuple(input)}: \sout{Reads the String input from standard input then parses and splits it to return String representing table name and 2D String array representing columns and sends this info to InitParseInsertRecord in the Parse Insert Record module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Insert Record module function and return its output}\\
+
+\noindent ParseSelect(input): \sout{Reads the String input from standard input then parses and splits it to return String representing table name and sends this info to InitParseSelect in the Parse Select module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Select module function and return its output}\\
+
+\noindent ParseDeleteTable(input): \sout{Reads the String input from standard input then parses and splits it to return String representing table name and sends this info to InitParseDeleteTable in the Parse Delete Table module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Delete Table module function and return its output}\\
+
+\noindent {\color{red}ParseDeleteTuple(input)}: \sout{Reads the String input from standard input then parses and splits it to return String representing table name, string representing primary key index, and a string representing the target value and sends this info to is sent to InitParseDeleteRecord in the Parse Delete Record module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Delete Record module function and return its output}\\ 
+
+\noindent {\color{red}ParseModifyTuple(input)}: \sout{Reads the String input from standard input the parses and splits it to return strings for the table name, primaryKeyIndex, and columns and sends this info to is sent to initParseModifyRecord in the Parse Modify Record module. The output along with any errors is returned.} {\color{red} Interface to pass input to Parse Modify Record module function and return its output}\\
+
+\noindent {\color{red}ParseModifyTable(input): Interface to pass input to Parse Modify Table module function and return its output}
+
+\subsection{Local Functions/Constants}
+N/A
+
+
+\newpage
+
+\section{Parse Modify Record}
+
+\subsection{Module}
+Parse Modify Record
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseModifyTuple} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseModifyTuple(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.ModifyTupleStatement struct.\\}
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Insert Record}
+
+\subsection{Module}
+Parse Insert Record
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseInsertTuple} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseInsertTuple(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.InsertTupleStatement struct.\\}
+
+\subsection{Local Functions/Constants}
+None
+
+\newpage
+
+\section{Parse Create Table}
+
+\subsection{Module}
+Parse Create Table
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+\subsubsection{Exported Types}
+N/A
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out}\\
+\hline
+{\color{red}ParseCreateTable} & {\color{red}String} & {\color{red}struct, error} \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseCreateTable(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.CreateTableStatement struct.\\}
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Delete Table}
+
+\subsection{Module}
+Parse Delete Table
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+\subsubsection{Exported Types}
+N/A
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseDelete} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseDeleteTable(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.DeleteTableStatement struct.\\}
+
+
+\subsection{Local Functions/Constants}
+N/A
+
+\newpage
+
+\section{Parse Select}
+
+\subsection{Module}
+Parse Select
+
+\subsection {Uses}
+N/A
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseSelect} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseSelect(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.SelectStatement struct.\\}
+
+\subsection{Local Functions/Constants}
+N/A
+\medskip
+
+
+\newpage
+
+\section{Parse Delete Record}
+
+\subsection{Module}
+Parse Delete Record
+
+\subsection {Uses}
+N/A
+
+\subsection {Syntax}
+
+\subsubsection {Exported Constants}
+N/A
+\subsubsection {Exported Types}
+N/A
+
+\subsubsection {Exported Access Programs}
+
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseDeleteTuple} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+{\color{red} \noindent ParseDeleteTuple(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.DeleteTupleStatement struct.\\}
+
+\subsection{Local Functions/Constants}
+N/A
+\medskip
+
+\newpage
+
+{\color{red}\section{Parse Modify Table}
+
+\subsection{Module}
+Parse Modify Table
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+N/A
+
+\subsubsection{Exported Access Programs}
+\begin{tabular}{| l | l | l | l |}
+\hline
+\textbf{Routine name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions}\\
+\hline
+{\color{red}ParseModifyTable} & {\color{red}String} & {\color{red}struct, error} & \\
+\hline
+\end{tabular}
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+\noindent ParseModifyTable(input): Takes the input string and parses it to get the appropriate information to store in the ParserStructs.ModifyTableStatement struct.\\
+
+\subsection{Local Functions/Constants}
+N/A}
+
+\newpage
+
+{\color{red}\section{Parser Structs}
+
+\subsection{Module}
+Parser Structs
+
+\subsection{Uses}
+N/A
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+N/A
+
+\subsubsection{Exported Types}
+CreateTableStatement: struct\\
+InsertTupleStatement: struct\\
+SelectStatement: struct\\
+DeleteTableStatement: struct\\
+DeleteTupleStatement: struct\\
+ModifyTableStatement: struct\\
+ModiftTupleStatement: struct
+
+\subsubsection{Exported Access Programs}
+N/A
+
+\subsection{Semantics}
+\subsubsection{State Variables}
+N/A
+
+\subsubsection{Environment Variables}
+N/A
+
+\subsubsection{State Invariant}
+N/A
+
+\subsubsection{Assumptions}
+N/A
+
+\subsubsection{Access Routine Semantics}
+N/A
+
+\subsection{Local Functions/Constants}
+N/A}
+\end {document}
